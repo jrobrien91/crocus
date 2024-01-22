@@ -24,3 +24,4 @@ dependencies:
     - ambient-api
     - sage-data-client
     - nexradaws
+    - py-openaq
