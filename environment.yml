@@ -13,7 +13,7 @@ dependencies:
   - dask
   - distributed
   - xarray
-  - pandas<2.0
+  - pandas
   - fiona
   - hvplot
   - imageio
