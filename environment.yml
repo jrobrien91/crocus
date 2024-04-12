@@ -18,8 +18,7 @@ dependencies:
   - hvplot
   - imageio
   - siphon
-  - pickle
-  - sklearn
+  - scikit-learn
   - pip
   - pip:
     - -r doc-requirements.txt
