@@ -13,11 +13,13 @@ dependencies:
   - dask
   - distributed
   - xarray
-  - pandas<2.0
+  - pandas
   - fiona
   - hvplot
   - imageio
   - siphon
+  - scikit-learn
+  - cfgrib
   - pip
   - pip:
     - -r doc-requirements.txt
