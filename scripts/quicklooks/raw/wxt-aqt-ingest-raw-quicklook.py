@@ -1,14 +1,61 @@
 import argparse
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import sage_data_client
 import datetime
 import pandas as pd
 import xarray as xr
 import numpy as np
+
 from metpy.calc import dewpoint_from_relative_humidity, wet_bulb_temperature
 from metpy.units import units
+from zoneinfo import ZoneInfo
+from scipy.stats.mstats import pearsonr
 
 pd.options.mode.copy_on_write = True
+
+def convert_mpl_times(ticks):
+    """
+    Convert matplotlib tickmarks (which are timezone naive) to account for local timezone (Chicago)
+
+    Input
+    -----
+    ticks : list (floats)
+        List containing floats of MPL numpy Datatime64 values
+
+    Calls
+    -----
+    correct_timezone
+
+    Output
+    ------
+    new_ticks : list (floats)
+        List containing floats of MPL datetime64 values (subtracting out 
+        the seconds to account for the timezone
+    """
+    def correct_timezone(dobj):
+        """
+        Set the datetime object to our Chicago time, check the utc offset. 
+
+        Subtract the hours from the UTC datetime object and return
+        """
+        if dobj.astimezone(ZoneInfo("America/Chicago")).strftime("%z") == "-0600":
+            out_date = dobj - datetime.timedelta(hours=6)
+        elif dobj.astimezone(ZoneInfo("America/Chicago")).strftime("%z") == "-0500":
+            out_date = dobj - datetime.timedelta(hours=5)
+        else:
+            out_date = dobj
+
+        return out_date
+        
+    # convert np datetime64 to datetime objects with mpl
+    utc_ticks = [mpl.dates.num2date(x) for x in ticks]
+    # remove the timezone from datetime objects
+    local_ticks = [correct_timezone(x) for x in utc_ticks]
+    # convert the datetime objects back to np datetime64 ticks
+    correct_ticks = [mpl.dates.date2num(x) for x in local_ticks]
+    
+    return correct_ticks
 
 def timeseries(args, wxt_ds, aqt_ds, DATE=None):
     """
@@ -36,7 +83,7 @@ def timeseries(args, wxt_ds, aqt_ds, DATE=None):
     """
 
     fig, axarr = plt.subplots(4, 1, figsize=[10, 14])
-    fig.subplots_adjust(hspace=0.5)
+    fig.subplots_adjust(hspace=0.4)
 
     # --------------------------
     # Air & Dewpoint Temperature
@@ -52,11 +99,12 @@ def timeseries(args, wxt_ds, aqt_ds, DATE=None):
     else:
         newDate = args.start_date.split('T')[0] + ' - ' + args.end_date.split('T')[0]
 
-    axarr[0].set_title(args.node + ' - ' + newDate)
+    axarr[0].set_title(args.node + ' RAW/BEEHIVE - ' + newDate)
     axarr[0].set_ylabel("Temperature \n [C]")
     axarr[0].set_xlabel("Time [UTC]")
     axarr[0].legend(loc="upper left")
     axarr[0].grid(True)
+    axarr[0].xaxis.set_major_formatter(mpl.dates.DateFormatter('%Y-%m-%d \n %H:%M:%S'))
 
     # -------------------------
     # Wind Direction and Speed
@@ -70,8 +118,10 @@ def timeseries(args, wxt_ds, aqt_ds, DATE=None):
 
     axarr[1].set_ylim([0, 360])
     axarr[1].grid(True)
+    axarr[1].set_xlabel("Time [UTC]")
     axarr[1].set_ylabel(r'Wind Direction [$^\circ$]', color="tab:blue")
     ax2.set_ylabel(r"Wind Speed [m/s]", color="tab:orange")
+    axarr[1].xaxis.set_major_formatter(mpl.dates.DateFormatter('%Y-%m-%d \n %H:%M:%S'))
 
     # -----------------------
     # Particle Concentrations
@@ -87,6 +137,7 @@ def timeseries(args, wxt_ds, aqt_ds, DATE=None):
     axarr[2].grid(True)
     wxt_ds.rainfall.plot(ax=ax3, color="tab:red")
     ax3.set_ylabel(r"Rainfall Accumulation [mm]", color="tab:red")
+    axarr[2].xaxis.set_major_formatter(mpl.dates.DateFormatter('%Y-%m-%d \n %H:%M:%S'))
                                                       
     # -----------------------
     # Gas Concentrations
@@ -99,10 +150,40 @@ def timeseries(args, wxt_ds, aqt_ds, DATE=None):
 
     axarr[3].set_ylabel(r"Conc [ppm]")
     axarr[3].set_xlabel("Time [UTC]")
-    axarr[3].legend(loc="lower left")
+    axarr[3].legend(loc="upper left")
     axarr[3].grid(True)
+    axarr[3].xaxis.set_major_formatter(mpl.dates.DateFormatter('%Y-%m-%d \n %H:%M:%S'))
 
-    #plt.savefig('NEIU_W08D_' + DATE + '_timeseries.png')
+    # Define the twin axis. 
+    axB = axarr[3].twiny()
+    # Define the tick locations. 
+    new_tick_locations = []
+    for tick in axarr[3].get_xticks():
+        new_tick_locations.append(tick)
+    # Define the UTC date in Local Time
+    newtimes = convert_mpl_times(new_tick_locations)
+    # Move twinned axis ticks and label from top to bottom
+    axB.xaxis.set_ticks_position("bottom")
+    axB.xaxis.set_label_position("bottom")
+    # Offset the twin axis below the host. 
+    axB.spines["bottom"].set_position(("axes",-0.4))
+    # Turn on only the bottom spine. 
+    axB.set_frame_on(True)
+    axB.patch.set_visible(False)
+    # Set the locations. 
+    axB.xaxis.set_major_locator(mpl.dates.AutoDateLocator())
+    axB.xaxis.set_major_formatter(mpl.dates.DateFormatter('%Y-%m-%d \n %H:%M:%S'))
+    axB.set_xticks(newtimes[:])
+    # Define the dual axis labels. 
+    axB.set_xlabel("Time [US/Chicago]")
+    # Define the dual axis limits. 
+    axB.set_xlim(min(newtimes),max(newtimes))
+    # Set the limits to each subplot
+    axarr[0].set_xlim(min(new_tick_locations), max(new_tick_locations))
+    axarr[1].set_xlim(min(new_tick_locations), max(new_tick_locations))
+    axarr[2].set_xlim(min(new_tick_locations), max(new_tick_locations))
+    axarr[3].set_xlim(min(new_tick_locations), max(new_tick_locations))
+    
     return axarr
 
 def environment(args, wxt_ds, aqt_ds, DATE=None):
@@ -114,7 +195,7 @@ def environment(args, wxt_ds, aqt_ds, DATE=None):
     else:
         newDate = args.start_date.split('T')[0] + ' - ' + args.end_date.split('T')[0]
 
-    plt.suptitle(args.node + '-' + newDate)
+    plt.suptitle(args.node + 'RAW/BEEHIVE - ' + newDate)
 
     # ----------------
     # Average the Data
@@ -145,11 +226,28 @@ def environment(args, wxt_ds, aqt_ds, DATE=None):
     axarr2[0, 0].set_ylabel('AQT')
     axarr2[0, 0].grid(True)
     # determine 1:1 ratio line
-    ratio = np.linspace(var_min, var_max)
-    axarr2[0, 0].plot(ratio, ratio, color="k", linestyle="--", linewidth=2.0)
+    ratio = np.linspace(var_min-1, var_max+1)
+    axarr2[0, 0].plot(ratio, ratio, color="tab:red", linestyle="--", linewidth=2.0)
     # plot the colorbar
     cbar = plt.colorbar(scc)
     cbar.ax.set_ylabel(r"WXT Wind Direction [$^o$]")
+
+    # Determine the best fit line
+    aqt = np.ma.masked_invalid(aqt_1min_ds.sel(time=slice(DATE, DATE)).temperature.data)
+    wxt = np.ma.masked_invalid(wxt_1min_ds.sel(time=slice(DATE, DATE)).temperature.data)
+    z = np.ma.polyfit(wxt, aqt, 1)
+    p = np.poly1d(z)
+    
+    # Plot the best fit line
+    axarr2[0, 0].plot(wxt, p(wxt), 'k', linewidth=2)
+    # Display the line equation
+    axarr2[0, 0].text(var_min-0.75, var_max, f"y = {z[0]:.3f}x + ({z[1]:.3f})", color='k', fontsize=12)
+    # Calculate Pearson Correlation Coefficient
+    cc_conc = pearsonr(wxt, aqt)
+    # Display the Pearson CC
+    axarr2[0, 0].text(var_min-0.75, var_max-1.0, "Pearson CC: %.2f" % (cc_conc[0]), fontsize=12)
+    # Display the total number of samples
+    axarr2[0, 0].text(var_min-0.75, var_max-2.0, "N = %.0f" % (wxt_1min_ds.sel(time=slice(DATE, DATE)).temperature.data.shape[0]), fontsize=12)
 
     # ---------------------
     # Air Temp / Wind Speed
@@ -167,11 +265,23 @@ def environment(args, wxt_ds, aqt_ds, DATE=None):
     axarr2[0, 1].set_ylabel('AQT')
     axarr2[0, 1].grid(True)
     # determine 1:1 ratio line
-    ratio = np.linspace(var_min, var_max)
-    axarr2[0, 1].plot(ratio, ratio, color="k", linestyle="--", linewidth=2.0)
+    ratio = np.linspace(var_min-1, var_max+1)
+    axarr2[0, 1].plot(ratio, ratio, color="tab:red", linestyle="--", linewidth=2.0)
     # plot the colorbar
     cbar = plt.colorbar(scc)
     cbar.ax.set_ylabel(r"WXT Mean Wind Speed [m/s]")
+
+    # Plot the best fit line
+    axarr2[0, 1].plot(wxt, p(wxt), 'k', linewidth=2)
+    # Display the line equation
+    axarr2[0, 1].text(var_min-0.75, var_max+0.0, f"y = {z[0]:.3f}x + ({z[1]:.3f})", color='k', fontsize=12)
+    # Calculate Pearson Correlation Coefficient
+    cc_conc = pearsonr(wxt, aqt)
+    # Display the Pearson CC
+    axarr2[0, 1].text(var_min-0.75, var_max-1.0, "Pearson CC: %.2f" % (cc_conc[0]), fontsize=12)
+    # Display the total number of samples
+    axarr2[0, 1].text(var_min-0.75, var_max-2.0, "N = %.0f" % (wxt_1min_ds.sel(time=slice(DATE, DATE)).temperature.data.shape[0]), fontsize=12)
+  
 
     # --------------------------
     # Humidity / Wind Direction
@@ -189,18 +299,34 @@ def environment(args, wxt_ds, aqt_ds, DATE=None):
                                cmap="coolwarm"
     )
 
-    axarr2[1, 0].set_xlim([var_min - 1, var_max + 1])
-    axarr2[1, 0].set_ylim([var_min - 1, var_max + 1])
+    axarr2[1, 0].set_xlim([var_min - 1, 100])
+    axarr2[1, 0].set_ylim([var_min - 1, 100])
     axarr2[1, 0].set_title('Humidity [%]')
     axarr2[1, 0].set_xlabel('WXT')
     axarr2[1, 0].set_ylabel('AQT')
     axarr2[1, 0].grid(True)
     # determine 1:1 ratio line
-    ratio = np.linspace(var_min, var_max)
+    ratio = np.linspace(var_min-1, 100)
     axarr2[1, 0].plot(ratio, ratio, color="tab:red", linestyle="--", linewidth=2.0)
     # plot the colorbar
     cbar = plt.colorbar(scc)
     cbar.ax.set_ylabel(r"WXT Wind Direction [$^o$]")
+
+    # Determine the best fit line
+    aqt = np.ma.masked_invalid(aqt_1min_ds.sel(time=slice(DATE, DATE)).dewpoint.data)
+    wxt = np.ma.masked_invalid(wxt_1min_ds.sel(time=slice(DATE, DATE)).dewpoint.data)
+    z = np.ma.polyfit(wxt, aqt, 1)
+    p = np.poly1d(z)
+    # Plot the best fit line
+    axarr2[1, 0].plot(wxt, p(wxt), 'k', linewidth=2)
+    # Display the line equation
+    axarr2[1, 0].text(var_min-0.25, 96, f"y = {z[0]:.3f}x + ({z[1]:.3f})", color='k', fontsize=12)
+    # Calculate Pearson Correlation Coefficient
+    cc_conc = pearsonr(wxt, aqt)
+    # Display the Pearson CC
+    axarr2[1, 0].text(var_min-0.25, 93, "Pearson CC: %.2f" % (cc_conc[0]), fontsize=12)
+    # Display the total number of samples
+    axarr2[1, 0].text(var_min-0.25, 90, "N = %.0f" % (wxt_1min_ds.sel(time=slice(DATE, DATE)).dewpoint.data.shape[0]), fontsize=12)
 
     # ----------------------
     # Humidity / Wind Speed
@@ -211,18 +337,29 @@ def environment(args, wxt_ds, aqt_ds, DATE=None):
                                cmap="coolwarm"
     )
 
-    axarr2[1, 1].set_xlim([var_min - 1, var_max + 1])
-    axarr2[1, 1].set_ylim([var_min - 1, var_max + 1])
+    axarr2[1, 1].set_xlim([var_min - 1, 100])
+    axarr2[1, 1].set_ylim([var_min - 1, 100])
     axarr2[1, 1].set_title('Humidity [%]')
     axarr2[1, 1].set_xlabel('WXT')
     axarr2[1, 1].set_ylabel('AQT')
     axarr2[1, 1].grid(True)
     # determine 1:1 ratio line
-    ratio = np.linspace(var_min, var_max)
+    ratio = np.linspace(var_min-1 , 100)
     axarr2[1, 1].plot(ratio, ratio, color="tab:red", linestyle="--", linewidth=2.0)
     # plot the colorbar
     cbar = plt.colorbar(scc)
     cbar.ax.set_ylabel(r"WXT Mean Wind Speed [m/s]")
+
+    # Plot the best fit line
+    axarr2[1, 1].plot(wxt, p(wxt), 'k', linewidth=2)
+    # Display the line equation
+    axarr2[1, 1].text(var_min-0.25, 96, f"y = {z[0]:.3f}x + ({z[1]:.3f})", color='k', fontsize=12)
+    # Calculate Pearson Correlation Coefficient
+    cc_conc = pearsonr(wxt, aqt)
+    # Display the Pearson CC
+    axarr2[1, 1].text(var_min-0.25, 93, "Pearson CC: %.2f" % (cc_conc[0]), fontsize=12)
+    # Display the total number of samples
+    axarr2[1, 1].text(var_min-0.25, 90, "N = %.0f" % (wxt_1min_ds.sel(time=slice(DATE, DATE)).dewpoint.data.shape[0]), fontsize=12)
 
     # --------------------------
     # Pressure / Wind Direction
@@ -247,11 +384,27 @@ def environment(args, wxt_ds, aqt_ds, DATE=None):
     axarr2[2, 0].set_ylabel('AQT')
     axarr2[2, 0].grid(True)
     # determine 1:1 ratio line
-    ratio = np.linspace(var_min, var_max)
+    ratio = np.linspace(var_min-1, var_max+1)
     axarr2[2, 0].plot(ratio, ratio, color="tab:red", linestyle="--", linewidth=2.0)
     # plot the colorbar
     cbar = plt.colorbar(scc)
     cbar.ax.set_ylabel(r"WXT Wind Direction [$^o$]")
+
+    # Determine the best fit line
+    aqt = np.ma.masked_invalid(aqt_1min_ds.sel(time=slice(DATE, DATE)).pressure.data)
+    wxt = np.ma.masked_invalid(wxt_1min_ds.sel(time=slice(DATE, DATE)).pressure.data)
+    z = np.ma.polyfit(wxt, aqt, 1)
+    p = np.poly1d(z)
+    # Plot the best fit line
+    axarr2[2, 0].plot(wxt, p(wxt), 'k', linewidth=2)
+    # Display the line equation
+    axarr2[2, 0].text(var_min-0.9, var_max+0.6, f"y = {z[0]:.3f}x + ({z[1]:.3f})", color='k', fontsize=12)
+    # Calculate Pearson Correlation Coefficient
+    cc_conc = pearsonr(wxt, aqt)
+    # Display the Pearson CC
+    axarr2[2, 0].text(var_min-0.9, var_max+0.2, "Pearson CC: %.2f" % (cc_conc[0]), fontsize=12)
+    # Display the total number of samples
+    axarr2[2, 0].text(var_min-0.9, var_max-0.2, "N = %.0f" % (wxt_1min_ds.sel(time=slice(DATE, DATE)).pressure.data.shape[0]), fontsize=12)
 
     # ---------------------
     # Pressure / Wind Speed
@@ -270,14 +423,25 @@ def environment(args, wxt_ds, aqt_ds, DATE=None):
     axarr2[2, 1].set_ylabel('AQT')
     axarr2[2, 1].grid(True)
     # determine 1:1 ratio line
-    ratio = np.linspace(var_min, var_max)
+    ratio = np.linspace(var_min-1, var_max+1)
     axarr2[2, 1].plot(ratio, ratio, color="tab:red", linestyle="--", linewidth=2.0)
     # plot the colorbar
     cbar = plt.colorbar(scc)
     cbar.ax.set_ylabel(r"WXT Mean Wind Speed [m/s]")
 
+    # Plot the best fit line
+    axarr2[2, 1].plot(wxt, p(wxt), 'k', linewidth=2)
+    # Display the line equation
+    axarr2[2, 1].text(var_min-0.9, var_max+0.6, f"y = {z[0]:.3f}x + ({z[1]:.3f})", color='k', fontsize=12)
+    # Calculate Pearson Correlation Coefficient
+    cc_conc = pearsonr(wxt, aqt)
+    # Display the Pearson CC
+    axarr2[2, 1].text(var_min-0.9, var_max+0.2, "Pearson CC: %.2f" % (cc_conc[0]), fontsize=12)
+    # Display the total number of samples
+    axarr2[2, 1].text(var_min-0.9, var_max-0.2, "N = %.0f" % (wxt_1min_ds.sel(time=slice(DATE, DATE)).pressure.data.shape[0]), fontsize=12)
+
     # free up memory
-    del wxt_1min_ds, aqt_1min_ds
+    del wxt_1min_ds, aqt_1min_ds, z, p, aqt, wxt, cc_conc, ratio
 
     return axarr2
 
@@ -310,6 +474,7 @@ def ingest_wxt(start,
             Xarray dataset containing xarray data
     
     """
+    print("in ingest_wxt and node is: ", global_attrs['WSN'])
     df_temp = sage_data_client.query(start=start,
                                      end=end, 
                                      filter={"name" : 'wxt.env.temp|wxt.env.humidity|wxt.env.pressure|wxt.rain.accumulation',
@@ -413,6 +578,7 @@ def ingest_aqt(start,
             Xarray dataset containing xarray data
     
     """
+    print("in ingest_aqt and node is: ", global_attrs['WSN'])
     df_aq = sage_data_client.query(start=start,
                                    end=end, 
                                    filter={"plugin" : global_attrs['aqt-plugin'],
@@ -473,6 +639,7 @@ def ingest_aqt(start,
     
 
 def main(args, site_args, instr_attrs):
+
     # retrieve WXT data
     wxt_ds = ingest_wxt(args.start_date, 
                         args.end_date,
@@ -483,8 +650,10 @@ def main(args, site_args, instr_attrs):
                         args.end_date,
                         site_args,
                         instr_attrs['aqt'])
+    print(len(wxt_ds.temperature.data))
+    print(len(aqt_ds.temperature.data))
     # define the output filename
-    nout = (site_args['site_ID'] + 
+    nout = (site_args['site_ID'] + '_' + site_args['WSN'] + '_' + 
             args.start_date.split('T')[0] + '_' + args.start_date.split('T')[1][:-1].replace(':', '') +
             '_' +
             args.end_date.split('T')[0] + '_' + args.end_date.split('T')[1][:-1].replace(':', '')
@@ -500,6 +669,9 @@ def main(args, site_args, instr_attrs):
     del wxt_ds, aqt_ds, time_fig, env_fig
 
 if __name__ == '__main__':
+
+    waggle_timezone = "UTC"
+    local_timezone = "America/Chicago"
      
     # Site attributes
     global_NEIU = {'conventions': "CF 1.10",
@@ -558,7 +730,7 @@ if __name__ == '__main__':
                     'longitude' : -87.99507543}
     
     global_ADM = {'conventions': "CF 1.10",
-                  'WSN':'W0A4',
+                  'WSN':'W09E',
                   'site_ID' : "ADM",
                   'CAMS_tag' : "CMS-WXT-013",
                   'datastream' : "CMS_wxt536_ADM_a1",
@@ -635,20 +807,20 @@ if __name__ == '__main__':
     parser.add_argument("--start_date",
                         type=str,
                         dest='start_date',
-                        default=(datetime.datetime.now(datetime.UTC) - 
-                                 datetime.timedelta(days=1)).strftime('%Y-%m-%dT05:00:00Z'),
+                        default=(datetime.datetime.now(ZoneInfo(waggle_timezone)) - 
+                                 datetime.timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:00Z'),
                         help="Date to Start Quicklook Creation in YYYY-MM-DDThh:mm:ssZ format"
     )
     parser.add_argument("--end_date",
                         type=str,
                         dest="end_date",
-                        default=datetime.datetime.now(datetime.UTC).strftime('%Y-%m-%dT%m:%m:00Z'),
+                        default=datetime.datetime.now(ZoneInfo(waggle_timezone)).strftime('%Y-%m-%dT%H:%M:00Z'),
                         help="Date to End Quicklook Creation in YYYY-MM-DDThh:mm:ssZ format"
     )
     parser.add_argument("--outdir",
                         type=str,
                         dest="outdir",
-                        default="/home/obrienj/crocus/quicklooks/",
+                        default="./",
                         help="Directory to output figures. Default is GCE home directory")
 
     args = parser.parse_args()
