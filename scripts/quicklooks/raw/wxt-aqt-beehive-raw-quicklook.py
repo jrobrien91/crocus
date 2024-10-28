@@ -739,6 +739,17 @@ if __name__ == '__main__':
                   'datalevel' : "a1",
                   'latitude' : 41.867571129,
                   'longitude' : -87.649593711}
+
+    global_CCICS = {'conventions': "CF 1.10",
+                    'WSN':'W08B',
+                    'site_ID' : "CCICS",
+                    'CAMS_tag' : "CMS-WXT-099",
+                    'datastream' : "CMS_wxt536_CCICS_a1",
+                    'wxt-plugin' : "registry.sagecontinuum.org/jrobrien/waggle-wxt536:0.*",
+                    "aqt-plugin" : "registry.sagecontinuum.org/jrobrien/waggle-aqt:0.23.5.*",
+                    'datalevel' : "a1",
+                    'latitude' : 41.822953674,
+                    'longitude' : -87.609452418}
     
     #put these in a dictionary for accessing
     global_sites = {'NU' : global_NU, 
@@ -746,7 +757,8 @@ if __name__ == '__main__':
                     'NEIU' : global_NEIU,
                     'UIC' : global_UIC,
                     'ATMOS' : global_ATMOS,
-                    'ADM' : global_ADM}
+                    'ADM' : global_ADM,
+                    'CCICS' : global_CCICS}
     
     #Variable attributes
     var_attrs_wxt = {'temperature': {'standard_name' : 'air_temperature',
