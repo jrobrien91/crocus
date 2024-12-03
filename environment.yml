@@ -4,6 +4,7 @@ channels:
   - defaults
   - pyviz
 dependencies:
+  - python=3.11
   - arm_pyart
   - act-atmos
   - matplotlib
@@ -21,9 +22,11 @@ dependencies:
   - scikit-learn
   - cfgrib
   - geopandas
+  - cmweather
   - pip
   - pip:
     - -r doc-requirements.txt
     - ambient-api
     - sage-data-client
     - nexradaws
+    - php
