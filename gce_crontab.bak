@@ -1,0 +1,45 @@
+# Edit this file to introduce tasks to be run by cron.
+# 
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+# 
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').
+# 
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+# 
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+# 
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+# 
+# For more information see the manual pages of crontab(5) and cron(8)
+# 
+# m h  dom mon dow   command
+SHELL=/bin/bash
+BASH_ENV=~/.bashrc_conda
+MAILTO=obrienj@anl.gov
+
+
+# WXT/AQT Raw Daily Timeseries
+0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node NEIU --outdir /home/obrienj/crocus/neiu/
+0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node CSU --outdir /home/obrienj/crocus/csu/
+0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node NU --outdir /home/obrienj/crocus/nu/
+0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node UIC --outdir /home/obrienj/crocus/uic/
+0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node ATMOS --outdir /home/obrienj/crocus/atmos/
+0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node CCICS --outdir /home/obrienj/crocus/ccics/
+0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node BIG --outdir /home/obrienj/crocus/big/
+
+# WXT/AQT Raw Daily Tables
+0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node NEIU --outdir /home/obrienj/crocus/neiu/
+0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node CSU --outdir /home/obrienj/crocus/csu/
+0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node NU --outdir /home/obrienj/crocus/nu/
+0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node UIC --outdir /home/obrienj/crocus/uic/
+0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node ATMOS --outdir /home/obrienj/crocus/atmos/
+0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node CCICS --outdir /home/obrienj/crocus/ccics/
+0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node BIG --outdir /home/obrienj/crocus/big/
