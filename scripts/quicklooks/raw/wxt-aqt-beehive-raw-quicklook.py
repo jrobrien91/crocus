@@ -11,6 +11,7 @@ from metpy.calc import dewpoint_from_relative_humidity, wet_bulb_temperature
 from metpy.units import units
 from zoneinfo import ZoneInfo
 from scipy.stats.mstats import pearsonr
+from great_tables import GT, html, loc, exibble, style
 
 pd.options.mode.copy_on_write = True
 
@@ -474,7 +475,7 @@ def ingest_wxt(start,
             Xarray dataset containing xarray data
     
     """
-    print("in ingest_wxt and node is: ", global_attrs['WSN'])
+    print("ingest_wxt: ", datetime.datetime.now(ZoneInfo(waggle_timezone)).strftime('%Y-%m-%dT%H:%M:00Z'))
     df_temp = sage_data_client.query(start=start,
                                      end=end, 
                                      filter={"name" : 'wxt.env.temp|wxt.env.humidity|wxt.env.pressure|wxt.rain.accumulation',
@@ -578,7 +579,7 @@ def ingest_aqt(start,
             Xarray dataset containing xarray data
     
     """
-    print("in ingest_aqt and node is: ", global_attrs['WSN'])
+    print("ingest_aqt: ", datetime.datetime.now(ZoneInfo(waggle_timezone)).strftime('%Y-%m-%dT%H:%M:00Z'))
     df_aq = sage_data_client.query(start=start,
                                    end=end, 
                                    filter={"plugin" : global_attrs['aqt-plugin'],
@@ -640,6 +641,15 @@ def ingest_aqt(start,
 
 def main(args, site_args, instr_attrs):
 
+    # General information for cron
+    print("\nWXT/AQT Beehive Daily Quicklooks\n")
+
+    # Display site and date information for cron
+    print('Site:  ', site_args['site_ID'])
+    print('Node:  ', site_args['WSN'])
+    print('Start: ', args.start_date)
+    print('End:   ', args.end_date, "\n")
+
     # retrieve WXT data
     wxt_ds = ingest_wxt(args.start_date, 
                         args.end_date,
@@ -650,8 +660,39 @@ def main(args, site_args, instr_attrs):
                         args.end_date,
                         site_args,
                         instr_attrs['aqt'])
-    print(len(wxt_ds.temperature.data))
-    print(len(aqt_ds.temperature.data))
+    
+    # Display the instrument statistics for cron 
+    print("\nNumber of Obs, Expected Number of Obs, Percent of Expected")
+    if wxt_ds:
+        print("Number of WXT observations: ", 
+              len(wxt_ds.temperature.data),
+              ", 8640 ,",
+              (len(wxt_ds.temperature.data) / 8640.)*100,
+              " %"
+        )
+    else:
+        print("Number of WXT observations: No Data Found")
+
+    if aqt_ds:
+        print("Number of AQT observations: ", 
+              len(aqt_ds.temperature.data),
+              ", 4320 ,",
+              (len(aqt_ds.temperature.data) / 4320.)*100,
+              " %\n"
+        )
+    else:
+        print("Number of AQT observations: No Data Found")
+
+    # Display the daily mean values as santity check
+    print("Daily Mean - WXT Observations")
+    for var in wxt_ds.data_vars:
+        print(var + ' - ' + str(wxt_ds[var].resample(time="1D").mean().data[0].round(decimals=3)))
+
+    print("\nDaily Mean - AQT Observations")
+    for var in aqt_ds.data_vars:
+        print(var + ' - ' + str(aqt_ds[var].resample(time="1D").mean().data[0].round(decimals=3)))
+
+
     # define the output filename
     nout = (site_args['site_ID'] + '_' + site_args['WSN'] + '_' + 
             args.start_date.split('T')[0] + '_' + args.start_date.split('T')[1][:-1].replace(':', '') +

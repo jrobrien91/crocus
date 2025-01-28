@@ -20,9 +20,12 @@ dependencies:
   - siphon
   - scikit-learn
   - cfgrib
+  - great_tables
+  - polars
   - pip
   - pip:
-    - -r doc-requirements.txt
+    - selenium
     - ambient-api
     - sage-data-client
     - nexradaws
+    - -r doc-requirements.txt
