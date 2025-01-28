@@ -1,4 +1,4 @@
-name: crocus-test-2
+name: crocus
 channels:
   - conda-forge
   - defaults
