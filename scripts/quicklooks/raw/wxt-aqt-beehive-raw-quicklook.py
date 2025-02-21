@@ -11,7 +11,6 @@ from metpy.calc import dewpoint_from_relative_humidity, wet_bulb_temperature
 from metpy.units import units
 from zoneinfo import ZoneInfo
 from scipy.stats.mstats import pearsonr
-from great_tables import GT, html, loc, exibble, style
 
 pd.options.mode.copy_on_write = True
 
@@ -803,15 +802,27 @@ if __name__ == '__main__':
                     'latitude' : 41.777009821,
                     'longitude' : -87.609746965}
     
+    global_HUM  =  {'conventions': "CF 1.10",
+                    'WSN':'W0A1',
+                    'site_ID' : "HUM",
+                      'CAMS_tag' : "CMS-WXT-010",
+                      'datastream' : "CMS_wxt536_HUM_a1",
+                      'wxt-plugin' : "registry.sagecontinuum.org/jrobrien/waggle-wxt536:0.*",
+                      "aqt-plugin" : "registry.sagecontinuum.org/jrobrien/waggle-aqt:0.23.5.*",
+                      'datalevel' : "a1",
+                      'latitude' : 41.905513206,
+                      'longitude' : -87.703525713}
+    
     #put these in a dictionary for accessing
     global_sites = {'NU' : global_NU, 
                     'CSU': global_CSU,
-                    'NEIU' : global_NEIU,
-                    'UIC' : global_UIC,
-                    'ATMOS' : global_ATMOS,
-                    'ADM' : global_ADM,
-                    'CCICS' : global_CCICS,
-                    'BIG' : global_BIG}
+                    'NEIU': global_NEIU,
+                    'UIC': global_UIC,
+                    'ATMOS': global_ATMOS,
+                    'ADM': global_ADM,
+                    'CCICS': global_CCICS,
+                    'BIG': global_BIG,
+                    'HUM': global_HUM}
     
     #Variable attributes
     var_attrs_wxt = {'temperature': {'standard_name' : 'air_temperature',
