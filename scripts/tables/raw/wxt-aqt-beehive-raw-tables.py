@@ -573,6 +573,17 @@ if __name__ == '__main__':
                     'datalevel' : "a1",
                     'latitude' : 41.777009821,
                     'longitude' : -87.609746965}
+        
+    global_HUM  =  {'conventions': "CF 1.10",
+                    'WSN':'W0A1',
+                    'site_ID' : "HUM",
+                    'CAMS_tag' : "CMS-WXT-010",
+                    'datastream' : "CMS_wxt536_HUM_a1",
+                    'wxt-plugin' : "registry.sagecontinuum.org/jrobrien/waggle-wxt536:0.*",
+                    "aqt-plugin" : "registry.sagecontinuum.org/jrobrien/waggle-aqt:0.23.5.*",
+                    'datalevel' : "a1",
+                    'latitude' : 41.905513206,
+                    'longitude' : -87.703525713}
     
     #put these in a dictionary for accessing
     global_sites = {'NU' : global_NU, 
@@ -582,7 +593,8 @@ if __name__ == '__main__':
                     'ATMOS' : global_ATMOS,
                     'ADM' : global_ADM,
                     'CCICS' : global_CCICS,
-                    'BIG' : global_BIG}
+                    'BIG' : global_BIG,
+                    'HUM': global_HUM}
     
     #Variable attributes
     var_attrs_wxt = {'temperature': {'standard_name' : 'air_temperature',
