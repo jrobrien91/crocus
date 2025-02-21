@@ -34,6 +34,7 @@ MAILTO=obrienj@anl.gov
 0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node ATMOS --outdir /home/obrienj/crocus/atmos/
 0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node CCICS --outdir /home/obrienj/crocus/ccics/
 0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node BIG --outdir /home/obrienj/crocus/big/
+0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node HUM --outdir /home/obrienj/crocus/hum/
 
 # WXT/AQT Raw Daily Tables
 0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node NEIU --outdir /home/obrienj/crocus/neiu/
@@ -43,3 +44,4 @@ MAILTO=obrienj@anl.gov
 0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node ATMOS --outdir /home/obrienj/crocus/atmos/
 0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node CCICS --outdir /home/obrienj/crocus/ccics/
 0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node BIG --outdir /home/obrienj/crocus/big/
+0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node HUM --outdir /home/obrienj/crocus/hum/
