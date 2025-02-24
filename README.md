@@ -19,12 +19,12 @@ Repo to store personal analysis for the Community Research on Climate and Urban 
 git branch --track branch-name origin/branch-name
 ```
 
-1. To update the crontab
+2. To update the crontab
 ```bash
 crontab -e
 ```
 
-1. How to backup crontab
+3. How to backup crontab
 ```bash
 crontab -l > gce_crontab.bak
 ```
