@@ -1,0 +1,5 @@
+bl_detection/
+  ├─ __init__.py
+  ├─ boundary_layer.py  <- The module with the BL detection functions
+  └─ example_script.py   <- Example usage
+
