@@ -824,6 +824,17 @@ if __name__ == '__main__':
                     'latitude' : 41.701476659,
                     'longitude' : -87.9953044}
     
+    global_SHEDD = {'conventions': "CF 1.10",
+                    'WSN':'W09E',
+                    'site_ID' : "SHEDD",
+                    'CAMS_tag' : "CMS-WXT-007",
+                    'datastream' : "CMS_wxt536_SHEDD_a1",
+                    'plugin' : "registry.sagecontinuum.org/jrobrien/waggle-wxt536:0.*"
+                    "aqt-plugin" : "registry.sagecontinuum.org/jrobrien/waggle-aqt:0.23.5.*",
+                    'datalevel' : "a1",
+                    'latitude' : 41.867918965,
+                    'longitude' : -87.613535027}
+    
     #put these in a dictionary for accessing
     global_sites = {'NU' : global_NU, 
                     'CSU': global_CSU,
@@ -834,7 +845,8 @@ if __name__ == '__main__':
                     'CCICS': global_CCICS,
                     'BIG': global_BIG,
                     'HUM': global_HUM,
-                    "DOWN": global_DOWN}
+                    "DOWN": global_DOWN,
+                    "SHEDD": global_SHEDD}
     
     #Variable attributes
     var_attrs_wxt = {'temperature': {'standard_name' : 'air_temperature',
