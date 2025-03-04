@@ -829,7 +829,7 @@ if __name__ == '__main__':
                     'site_ID' : "SHEDD",
                     'CAMS_tag' : "CMS-WXT-007",
                     'datastream' : "CMS_wxt536_SHEDD_a1",
-                    'plugin' : "registry.sagecontinuum.org/jrobrien/waggle-wxt536:0.*"
+                    'plugin' : "registry.sagecontinuum.org/jrobrien/waggle-wxt536:0.*",
                     "aqt-plugin" : "registry.sagecontinuum.org/jrobrien/waggle-aqt:0.23.5.*",
                     'datalevel' : "a1",
                     'latitude' : 41.867918965,
