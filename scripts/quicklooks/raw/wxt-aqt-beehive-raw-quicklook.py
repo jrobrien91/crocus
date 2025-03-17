@@ -835,6 +835,17 @@ if __name__ == '__main__':
                     'latitude' : 41.867918965,
                     'longitude' : -87.613535027}
     
+    global_VILLA = {'conventions': "CF 1.10",
+                    'WSN':'W095',
+                    'site_ID' : "VLPK",
+                    'CAMS_tag' : "CMS-WXT-004",
+                    'datastream' : "CMS_wxt536_VLPK_a1",
+                    'wxt-plugin' : "registry.sagecontinuum.org/jrobrien/waggle-wxt536:0.*",
+                    "aqt-plugin" : "registry.sagecontinuum.org/jrobrien/waggle-aqt:0.23.5.*",
+                    'datalevel' : "a1",
+                    'latitude' : 41.884884633495616,
+                    'longitude' : -87.97871741056426}
+    
     #put these in a dictionary for accessing
     global_sites = {'NU' : global_NU, 
                     'CSU': global_CSU,
@@ -846,7 +857,8 @@ if __name__ == '__main__':
                     'BIG': global_BIG,
                     'HUM': global_HUM,
                     "DOWN": global_DOWN,
-                    "SHEDD": global_SHEDD}
+                    "SHEDD": global_SHEDD,
+                    "VLPK": global_VILLA}
     
     #Variable attributes
     var_attrs_wxt = {'temperature': {'standard_name' : 'air_temperature',
