@@ -5,6 +5,7 @@ Repo to store personal analysis for the Community Research on Climate and Urban 
 | Topic | Description | Keywords | Which Paper/Poster? | Date Completed |
 | :---: | :---------: | :------: | :-----------------: | :------------: |
 | MRMS - Three Panal Plot | Specific Storm Analysis | MRMS; WXT | Precipitation Network Paper | TBD |
+| MRMS - 24 hr Precip Accum | Specific Storm Analysis | MRMS; WXT | Preciptiation Network Paper | TBD |
 | US Water API | USGS Rain Gauge for Precipitaiton Comparison | MRMS, WXT | Preciptiation Paper | TBD |
 | CoCoRaHS API / Download | Need Gridded version for comparison | MRMS, WXT | Precipitaiton Paper | TBD |
 | AQT 530 vs 560 Analysis | Performance of the AQT / Standars | AQT, QC | CROCUS - AEROMMA Paper | TBD |
