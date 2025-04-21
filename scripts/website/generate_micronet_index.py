@@ -7,13 +7,15 @@ from datetime import datetime, timedelta
 
 # === CONFIG ===
 source_base = "/home/obrienj/crocus/"  # full directory with ALL plots
-target_base = "./CROCUS/micronet"      # public directory near index.html
+target_base = "/home/obrienj/public_html/CROCUS/micronet"      # public directory near index.html
 days_back = 4                          # files newer than this get copied
-output_file = "/home/obrienj/public_html/test_micronet_index.html"
+remove_days_back = 5
+output_file = "/home/obrienj/public_html/micronet_index.html"
 
 # === SETUP ===
 now = datetime.now()
 cutoff = now - timedelta(days=days_back)
+remove_cutoff = now - timedelta(days=remove_days_back)
 
 for root, dirs, files in os.walk(source_base):
     for fname in files:
@@ -34,6 +36,22 @@ for root, dirs, files in os.walk(source_base):
             # Copy file
             shutil.copy2(full_path, target_path)
             print(f"Copied: {rel_path}")
+
+# === DELETE OLD FILES FROM TARGET ===
+for root, dirs, files in os.walk(target_base):
+    for fname in files:
+        if not fname.endswith("timeseries.png"):
+            continue
+
+        target_path = os.path.join(root, fname)
+        mod_time = datetime.fromtimestamp(os.path.getmtime(target_path))
+
+        if mod_time < remove_cutoff:
+            os.remove(target_path)
+            rel_path = os.path.relpath(target_path, target_base)
+
+            print(f"Deleted (too old): {rel_path}")
+
 
 # Start building the HTML string
 html = """<!DOCTYPE html>
