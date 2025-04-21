@@ -25,6 +25,11 @@ SHELL=/bin/bash
 BASH_ENV=~/.bashrc_conda
 MAILTO=obrienj@anl.gov
 
+
+# -- Website --
+0 6 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/website/generate_micronet_index.py
+
+
 # -- Analysis -- 
 
 # WXT/AQT Raw Daily Timeseries
@@ -53,5 +58,3 @@ MAILTO=obrienj@anl.gov
 0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node SHEDD --outdir /home/obrienj/crocus/shedd/
 0 1 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/tables/raw/wxt-aqt-beehive-raw-tables.py --node VLPK --outdir /home/obrienj/crocus/vlpk/
 
-# -- Ingests --
-##0 * * * * conda activate ingests-dev; python /home/obrienj/git-repos/ingests/scripts/ingest-wxt.py 1 %y %m %d NEIU /nfs/gce/projects/crocus/data/ingested-data/long-term-sites/neiu/neiu-wxt-a1
