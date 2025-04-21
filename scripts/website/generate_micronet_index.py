@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 source_base = "/home/obrienj/crocus/"  # full directory with ALL plots
 target_base = "./CROCUS/micronet"      # public directory near index.html
 days_back = 4                          # files newer than this get copied
-output_file = "micronet_index.html"
+output_file = "/home/obrienj/public_html/test_micronet_index.html"
 
 # === SETUP ===
 now = datetime.now()
