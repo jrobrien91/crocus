@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 # === CONFIG ===
 source_base = "/home/obrienj/crocus/"  # full directory with ALL plots
 target_base = "/home/obrienj/public_html/CROCUS/micronet"      # public directory near index.html
+html_target = "./CROCUS/micronet/"
 days_back = 4                          # files newer than this get copied
 remove_days_back = 5
 output_file = "/home/obrienj/public_html/micronet_index.html"
@@ -94,11 +95,12 @@ for month in months:
         if fname.endswith("timeseries.png"):
             fpath = os.path.join(target_base, month, fname)
             timestamp = datetime.fromtimestamp(os.path.getmtime(fpath))
+            hpath = os.path.join(html_target, month, fname)
             html += f'''
 <div class="plot-item">
     <h4>{fname}</h4>
     <div class="timestamp">Last updated: {timestamp.strftime('%Y-%m-%d %H:%M:%S')}</div>
-    <a href="{fpath}" target="_blank"><img class="thumb" src="{fpath}" alt="{fname}"></a>
+    <a href="{hpath}" target="_blank"><img class="thumb" src="{hpath}" alt="{fname}"></a>
 </div>
 '''
 
