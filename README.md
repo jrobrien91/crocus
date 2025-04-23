@@ -4,8 +4,8 @@ Repo to store personal analysis for the Community Research on Climate and Urban 
 ## To Do
 | Topic | Description | Keywords | Which Paper/Poster? | Date Completed |
 | :---: | :---------: | :------: | :-----------------: | :------------: |
-| MRMS - Three Panal Plot | Specific Storm Analysis | MRMS; WXT | Precipitation Network Paper | TBD |
-| MRMS - 24 hr Precip Accum | Specific Storm Analysis | MRMS; WXT | Preciptiation Network Paper | TBD |
+| MRMS - Three Panal Plot | Specific Storm Analysis | MRMS; WXT | Precipitation Network Paper | [23 April 2025](https://github.com/jrobrien91/crocus/pull/20) |
+| MRMS - 24 hr Precip Accum | Specific Storm Analysis | MRMS; WXT | Preciptiation Network Paper | [23 April 2025](https://github.com/jrobrien91/crocus/pull/20) |
 | US Water API | USGS Rain Gauge for Precipitaiton Comparison | MRMS, WXT | Preciptiation Paper | TBD |
 | CoCoRaHS API / Download | Need Gridded version for comparison | MRMS, WXT | Precipitaiton Paper | TBD |
 | AQT 530 vs 560 Analysis | Performance of the AQT / Standars | AQT, QC | CROCUS - AEROMMA Paper | TBD |
