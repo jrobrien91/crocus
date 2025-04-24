@@ -28,9 +28,12 @@ MAILTO=obrienj@anl.gov
 
 # -- Website --
 0 6 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/website/generate_micronet_index.py
-
+0 6 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/website/generate_mrms_24hr_index.py
 
 # -- Analysis -- 
+
+# MRMS 24hr QPE
+0 5 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/mrms/crocus-mrms-24qpe.py --outdir /home/obrienj/crocus-analysis/mrms/qpe-24/
 
 # WXT/AQT Raw Daily Timeseries
 0 0 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/quicklooks/raw/wxt-aqt-beehive-raw-quicklook.py --node NEIU --outdir /home/obrienj/crocus/neiu/
