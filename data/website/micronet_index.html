@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Quicklook Plots</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        img.thumb { max-width: 300px; margin: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .plot-block { margin-bottom: 40px; }
+        .timestamp { color: #666; font-size: 0.9em; }
+        .folder-toggle { cursor: pointer; background: #eee; padding: 8px 12px; border-radius: 5px; margin: 10px 0; }
+        .folder-content { display: none; margin-left: 20px; }
+        .folder-content.open { display: block; }
+    </style>
+    <script>
+        function toggleFolder(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle("open");
+        }
+    </script>
+</head>
+<body>
+<h1>Quicklook Plot Dashboard</h1>
+<div class="plot-block" id="atmos">
+<div class="folder-toggle" onclick="toggleFolder('atmos_content')">▶ atmos/</div>
+<div class="folder-content" id="atmos_content">
+
+<div class="plot-item">
+    <h4>ATMOS_W0A4_2025-04-19_050000_2025-04-20_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-20 00:10:52</div>
+    <a href="./CROCUS/micronet/atmos/ATMOS_W0A4_2025-04-19_050000_2025-04-20_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/atmos/ATMOS_W0A4_2025-04-19_050000_2025-04-20_050000_timeseries.png" alt="ATMOS_W0A4_2025-04-19_050000_2025-04-20_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>ATMOS_W0A4_2025-04-20_050000_2025-04-21_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-21 00:10:53</div>
+    <a href="./CROCUS/micronet/atmos/ATMOS_W0A4_2025-04-20_050000_2025-04-21_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/atmos/ATMOS_W0A4_2025-04-20_050000_2025-04-21_050000_timeseries.png" alt="ATMOS_W0A4_2025-04-20_050000_2025-04-21_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>ATMOS_W0A4_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:10:34</div>
+    <a href="./CROCUS/micronet/atmos/ATMOS_W0A4_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/atmos/ATMOS_W0A4_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="ATMOS_W0A4_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>ATMOS_W0A4_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:13:30</div>
+    <a href="./CROCUS/micronet/atmos/ATMOS_W0A4_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/atmos/ATMOS_W0A4_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="ATMOS_W0A4_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+<div class="plot-block" id="big">
+<div class="folder-toggle" onclick="toggleFolder('big_content')">▶ big/</div>
+<div class="folder-content" id="big_content">
+
+<div class="plot-item">
+    <h4>BIG_W0A0_2025-04-19_050000_2025-04-20_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-20 00:10:25</div>
+    <a href="./CROCUS/micronet/big/BIG_W0A0_2025-04-19_050000_2025-04-20_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/big/BIG_W0A0_2025-04-19_050000_2025-04-20_050000_timeseries.png" alt="BIG_W0A0_2025-04-19_050000_2025-04-20_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>BIG_W0A0_2025-04-20_050000_2025-04-21_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-21 00:10:10</div>
+    <a href="./CROCUS/micronet/big/BIG_W0A0_2025-04-20_050000_2025-04-21_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/big/BIG_W0A0_2025-04-20_050000_2025-04-21_050000_timeseries.png" alt="BIG_W0A0_2025-04-20_050000_2025-04-21_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>BIG_W0A0_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:11:22</div>
+    <a href="./CROCUS/micronet/big/BIG_W0A0_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/big/BIG_W0A0_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="BIG_W0A0_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>BIG_W0A0_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:13:44</div>
+    <a href="./CROCUS/micronet/big/BIG_W0A0_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/big/BIG_W0A0_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="BIG_W0A0_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+<div class="plot-block" id="ccics">
+<div class="folder-toggle" onclick="toggleFolder('ccics_content')">▶ ccics/</div>
+<div class="folder-content" id="ccics_content">
+
+<div class="plot-item">
+    <h4>CCICS_W08B_2025-04-19_050000_2025-04-20_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-20 00:10:58</div>
+    <a href="./CROCUS/micronet/ccics/CCICS_W08B_2025-04-19_050000_2025-04-20_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/ccics/CCICS_W08B_2025-04-19_050000_2025-04-20_050000_timeseries.png" alt="CCICS_W08B_2025-04-19_050000_2025-04-20_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>CCICS_W08B_2025-04-20_050000_2025-04-21_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-21 00:11:08</div>
+    <a href="./CROCUS/micronet/ccics/CCICS_W08B_2025-04-20_050000_2025-04-21_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/ccics/CCICS_W08B_2025-04-20_050000_2025-04-21_050000_timeseries.png" alt="CCICS_W08B_2025-04-20_050000_2025-04-21_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>CCICS_W08B_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:10:29</div>
+    <a href="./CROCUS/micronet/ccics/CCICS_W08B_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/ccics/CCICS_W08B_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="CCICS_W08B_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>CCICS_W08B_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:13:26</div>
+    <a href="./CROCUS/micronet/ccics/CCICS_W08B_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/ccics/CCICS_W08B_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="CCICS_W08B_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+<div class="plot-block" id="csu">
+<div class="folder-toggle" onclick="toggleFolder('csu_content')">▶ csu/</div>
+<div class="folder-content" id="csu_content">
+
+<div class="plot-item">
+    <h4>CSU_W08E_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:05:32</div>
+    <a href="./CROCUS/micronet/csu/CSU_W08E_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/csu/CSU_W08E_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="CSU_W08E_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>CSU_W08E_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:13:30</div>
+    <a href="./CROCUS/micronet/csu/CSU_W08E_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/csu/CSU_W08E_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="CSU_W08E_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+<div class="plot-block" id="down">
+<div class="folder-toggle" onclick="toggleFolder('down_content')">▶ down/</div>
+<div class="folder-content" id="down_content">
+
+<div class="plot-item">
+    <h4>DOWN_W09D_2025-04-19_050000_2025-04-20_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-20 00:11:03</div>
+    <a href="./CROCUS/micronet/down/DOWN_W09D_2025-04-19_050000_2025-04-20_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/down/DOWN_W09D_2025-04-19_050000_2025-04-20_050000_timeseries.png" alt="DOWN_W09D_2025-04-19_050000_2025-04-20_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>DOWN_W09D_2025-04-20_050000_2025-04-21_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-21 00:11:04</div>
+    <a href="./CROCUS/micronet/down/DOWN_W09D_2025-04-20_050000_2025-04-21_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/down/DOWN_W09D_2025-04-20_050000_2025-04-21_050000_timeseries.png" alt="DOWN_W09D_2025-04-20_050000_2025-04-21_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>DOWN_W09D_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:10:45</div>
+    <a href="./CROCUS/micronet/down/DOWN_W09D_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/down/DOWN_W09D_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="DOWN_W09D_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>DOWN_W09D_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:13:41</div>
+    <a href="./CROCUS/micronet/down/DOWN_W09D_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/down/DOWN_W09D_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="DOWN_W09D_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+<div class="plot-block" id="hum">
+<div class="folder-toggle" onclick="toggleFolder('hum_content')">▶ hum/</div>
+<div class="folder-content" id="hum_content">
+
+<div class="plot-item">
+    <h4>HUM_W0A1_2025-04-19_050000_2025-04-20_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-20 00:11:02</div>
+    <a href="./CROCUS/micronet/hum/HUM_W0A1_2025-04-19_050000_2025-04-20_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/hum/HUM_W0A1_2025-04-19_050000_2025-04-20_050000_timeseries.png" alt="HUM_W0A1_2025-04-19_050000_2025-04-20_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>HUM_W0A1_2025-04-20_050000_2025-04-21_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-21 00:10:58</div>
+    <a href="./CROCUS/micronet/hum/HUM_W0A1_2025-04-20_050000_2025-04-21_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/hum/HUM_W0A1_2025-04-20_050000_2025-04-21_050000_timeseries.png" alt="HUM_W0A1_2025-04-20_050000_2025-04-21_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>HUM_W0A1_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:10:41</div>
+    <a href="./CROCUS/micronet/hum/HUM_W0A1_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/hum/HUM_W0A1_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="HUM_W0A1_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>HUM_W0A1_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:13:34</div>
+    <a href="./CROCUS/micronet/hum/HUM_W0A1_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/hum/HUM_W0A1_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="HUM_W0A1_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+<div class="plot-block" id="neiu">
+<div class="folder-toggle" onclick="toggleFolder('neiu_content')">▶ neiu/</div>
+<div class="folder-content" id="neiu_content">
+
+<div class="plot-item">
+    <h4>NEIU_W08D_2025-04-19_050000_2025-04-20_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-20 00:09:41</div>
+    <a href="./CROCUS/micronet/neiu/NEIU_W08D_2025-04-19_050000_2025-04-20_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/neiu/NEIU_W08D_2025-04-19_050000_2025-04-20_050000_timeseries.png" alt="NEIU_W08D_2025-04-19_050000_2025-04-20_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>NEIU_W08D_2025-04-20_050000_2025-04-21_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-21 00:07:26</div>
+    <a href="./CROCUS/micronet/neiu/NEIU_W08D_2025-04-20_050000_2025-04-21_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/neiu/NEIU_W08D_2025-04-20_050000_2025-04-21_050000_timeseries.png" alt="NEIU_W08D_2025-04-20_050000_2025-04-21_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>NEIU_W08D_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:06:59</div>
+    <a href="./CROCUS/micronet/neiu/NEIU_W08D_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/neiu/NEIU_W08D_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="NEIU_W08D_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>NEIU_W08D_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:10:07</div>
+    <a href="./CROCUS/micronet/neiu/NEIU_W08D_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/neiu/NEIU_W08D_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="NEIU_W08D_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+<div class="plot-block" id="nu">
+<div class="folder-toggle" onclick="toggleFolder('nu_content')">▶ nu/</div>
+<div class="folder-content" id="nu_content">
+
+<div class="plot-item">
+    <h4>NU_W099_2025-04-19_050000_2025-04-20_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-20 00:10:25</div>
+    <a href="./CROCUS/micronet/nu/NU_W099_2025-04-19_050000_2025-04-20_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/nu/NU_W099_2025-04-19_050000_2025-04-20_050000_timeseries.png" alt="NU_W099_2025-04-19_050000_2025-04-20_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>NU_W099_2025-04-20_050000_2025-04-21_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-21 00:10:34</div>
+    <a href="./CROCUS/micronet/nu/NU_W099_2025-04-20_050000_2025-04-21_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/nu/NU_W099_2025-04-20_050000_2025-04-21_050000_timeseries.png" alt="NU_W099_2025-04-20_050000_2025-04-21_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>NU_W099_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:10:36</div>
+    <a href="./CROCUS/micronet/nu/NU_W099_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/nu/NU_W099_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="NU_W099_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>NU_W099_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:13:25</div>
+    <a href="./CROCUS/micronet/nu/NU_W099_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/nu/NU_W099_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="NU_W099_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+<div class="plot-block" id="shedd">
+<div class="folder-toggle" onclick="toggleFolder('shedd_content')">▶ shedd/</div>
+<div class="folder-content" id="shedd_content">
+
+<div class="plot-item">
+    <h4>SHEDD_W09E_2025-04-19_050000_2025-04-20_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-20 00:10:55</div>
+    <a href="./CROCUS/micronet/shedd/SHEDD_W09E_2025-04-19_050000_2025-04-20_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/shedd/SHEDD_W09E_2025-04-19_050000_2025-04-20_050000_timeseries.png" alt="SHEDD_W09E_2025-04-19_050000_2025-04-20_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>SHEDD_W09E_2025-04-20_050000_2025-04-21_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-21 00:10:38</div>
+    <a href="./CROCUS/micronet/shedd/SHEDD_W09E_2025-04-20_050000_2025-04-21_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/shedd/SHEDD_W09E_2025-04-20_050000_2025-04-21_050000_timeseries.png" alt="SHEDD_W09E_2025-04-20_050000_2025-04-21_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>SHEDD_W09E_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:10:36</div>
+    <a href="./CROCUS/micronet/shedd/SHEDD_W09E_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/shedd/SHEDD_W09E_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="SHEDD_W09E_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>SHEDD_W09E_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:13:29</div>
+    <a href="./CROCUS/micronet/shedd/SHEDD_W09E_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/shedd/SHEDD_W09E_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="SHEDD_W09E_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+<div class="plot-block" id="uic">
+<div class="folder-toggle" onclick="toggleFolder('uic_content')">▶ uic/</div>
+<div class="folder-content" id="uic_content">
+
+<div class="plot-item">
+    <h4>UIC_W096_2025-04-19_050000_2025-04-20_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-20 00:10:19</div>
+    <a href="./CROCUS/micronet/uic/UIC_W096_2025-04-19_050000_2025-04-20_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/uic/UIC_W096_2025-04-19_050000_2025-04-20_050000_timeseries.png" alt="UIC_W096_2025-04-19_050000_2025-04-20_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>UIC_W096_2025-04-20_050000_2025-04-21_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-21 00:09:55</div>
+    <a href="./CROCUS/micronet/uic/UIC_W096_2025-04-20_050000_2025-04-21_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/uic/UIC_W096_2025-04-20_050000_2025-04-21_050000_timeseries.png" alt="UIC_W096_2025-04-20_050000_2025-04-21_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>UIC_W096_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:09:31</div>
+    <a href="./CROCUS/micronet/uic/UIC_W096_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/uic/UIC_W096_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="UIC_W096_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>UIC_W096_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:12:25</div>
+    <a href="./CROCUS/micronet/uic/UIC_W096_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/uic/UIC_W096_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="UIC_W096_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+<div class="plot-block" id="vlpk">
+<div class="folder-toggle" onclick="toggleFolder('vlpk_content')">▶ vlpk/</div>
+<div class="folder-content" id="vlpk_content">
+
+<div class="plot-item">
+    <h4>VLPK_W095_2025-04-19_050000_2025-04-20_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-20 00:10:59</div>
+    <a href="./CROCUS/micronet/vlpk/VLPK_W095_2025-04-19_050000_2025-04-20_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/vlpk/VLPK_W095_2025-04-19_050000_2025-04-20_050000_timeseries.png" alt="VLPK_W095_2025-04-19_050000_2025-04-20_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>VLPK_W095_2025-04-20_050000_2025-04-21_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-21 00:10:43</div>
+    <a href="./CROCUS/micronet/vlpk/VLPK_W095_2025-04-20_050000_2025-04-21_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/vlpk/VLPK_W095_2025-04-20_050000_2025-04-21_050000_timeseries.png" alt="VLPK_W095_2025-04-20_050000_2025-04-21_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>VLPK_W095_2025-04-21_050000_2025-04-22_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-22 00:10:40</div>
+    <a href="./CROCUS/micronet/vlpk/VLPK_W095_2025-04-21_050000_2025-04-22_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/vlpk/VLPK_W095_2025-04-21_050000_2025-04-22_050000_timeseries.png" alt="VLPK_W095_2025-04-21_050000_2025-04-22_050000_timeseries.png"></a>
+</div>
+
+<div class="plot-item">
+    <h4>VLPK_W095_2025-04-22_050000_2025-04-23_050000_timeseries.png</h4>
+    <div class="timestamp">Last updated: 2025-04-23 00:13:24</div>
+    <a href="./CROCUS/micronet/vlpk/VLPK_W095_2025-04-22_050000_2025-04-23_050000_timeseries.png" target="_blank"><img class="thumb" src="./CROCUS/micronet/vlpk/VLPK_W095_2025-04-22_050000_2025-04-23_050000_timeseries.png" alt="VLPK_W095_2025-04-22_050000_2025-04-23_050000_timeseries.png"></a>
+</div>
+</div></div>
+</body>
+</html>
