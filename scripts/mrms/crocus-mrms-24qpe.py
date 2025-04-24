@@ -131,7 +131,7 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
         # SHEDD and UIC are to close to each other. If UIC, plot to the left.
         if key == "UIC":
             # Add text 25 pixels to the left of the volcano.
-            ax.text(global_sites[key]['longitude']-0.08, 
+            ax.text(global_sites[key]['longitude']-0.09, 
                     global_sites[key]['latitude'], 
                     global_sites[key]['site_ID'], 
                     verticalalignment='center', 
@@ -141,7 +141,7 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
                     alpha=0.5, 
                     boxstyle='round'))
             # add the accumulation figure
-            ax.text(global_sites[key]['longitude']-0.12, 
+            ax.text(global_sites[key]['longitude']-0.14, 
                     global_sites[key]['latitude']-0.04, 
                     accum[key], 
                     verticalalignment='center', 
@@ -164,6 +164,27 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
             # Add text 25 pixels to the left of the marker.
             ax.text(global_sites[key]['longitude']-0.10, 
                     global_sites[key]['latitude']-0.045, 
+                    accum[key], 
+                    verticalalignment='center', 
+                    horizontalalignment='left', 
+                    transform=text_transform,
+                    bbox=dict(facecolor='olivedrab', 
+                    alpha=0.5, 
+                    boxstyle='round'))
+        elif key == "HUM" or key == "NEIU" or key == "VLPK":
+            # Add text 25 pixels to the left of the volcano.
+            ax.text(global_sites[key]['longitude']-0.055, 
+                    global_sites[key]['latitude']-0.005, 
+                    global_sites[key]['site_ID'], 
+                    verticalalignment='center', 
+                    horizontalalignment='left', 
+                    transform=text_transform,
+                    bbox=dict(facecolor='sandybrown', 
+                    alpha=0.5, 
+                    boxstyle='round'))
+            # Add text 25 pixels to the left of the marker.
+            ax.text(global_sites[key]['longitude']-0.12, 
+                    global_sites[key]['latitude']-0.04, 
                     accum[key], 
                     verticalalignment='center', 
                     horizontalalignment='left', 
@@ -256,7 +277,7 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
         # SHEDD and UIC are to close to each other. If UIC, plot to the left.
         if key == "UIC":
             # Add text 25 pixels to the left of the volcano.
-            ax1.text(global_sites[key]['longitude']-0.08, 
+            ax1.text(global_sites[key]['longitude']-0.09, 
                     global_sites[key]['latitude'], 
                     global_sites[key]['site_ID'], 
                     verticalalignment='center', 
@@ -296,6 +317,27 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
             ##        bbox=dict(facecolor='olivedrab', 
             ##        alpha=0.5, 
             ##        boxstyle='round'))
+        elif key == "HUM" or key == "NEIU" or key == "VLPK":
+            # Add text 25 pixels to the left of the volcano.
+            ax1.text(global_sites[key]['longitude']-0.055, 
+                    global_sites[key]['latitude']-0.005, 
+                    global_sites[key]['site_ID'], 
+                    verticalalignment='center', 
+                    horizontalalignment='left', 
+                    transform=text_transform,
+                    bbox=dict(facecolor='sandybrown', 
+                    alpha=0.5, 
+                    boxstyle='round'))
+            # Add text 25 pixels to the left of the marker.
+            ##ax1.text(global_sites[key]['longitude']-0.12, 
+            ##        global_sites[key]['latitude']-0.04, 
+            ##        accum[key], 
+            ##        verticalalignment='center', 
+            ##        horizontalalignment='left', 
+            ##        transform=text_transform,
+            ##        bbox=dict(facecolor='olivedrab', 
+            ##        alpha=0.5, 
+            #3        boxstyle='round'))
         else:
             # Add text 25 pixels to the left of the volcano.
             ax1.text(global_sites[key]['longitude'], 
@@ -381,7 +423,7 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
         # SHEDD and UIC are to close to each other. If UIC, plot to the left.
         if key == "UIC":
             # Add text 25 pixels to the left of the volcano.
-            ax3.text(global_sites[key]['longitude']-0.08, 
+            ax3.text(global_sites[key]['longitude']-0.09, 
                     global_sites[key]['latitude'], 
                     global_sites[key]['site_ID'], 
                     verticalalignment='center', 
@@ -391,7 +433,7 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
                     alpha=0.5, 
                     boxstyle='round'))
             # add the accumulation figure
-            ax3.text(global_sites[key]['longitude']-0.12, 
+            ax3.text(global_sites[key]['longitude']-0.14, 
                      global_sites[key]['latitude']-0.04, 
                      accum[key], 
                      verticalalignment='center', 
@@ -421,6 +463,27 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
                      bbox=dict(facecolor='olivedrab', 
                      alpha=0.5, 
                      boxstyle='round'))
+        elif key == "HUM" or key == "NEIU" or key == "VLPK":
+            # Add text 25 pixels to the left of the volcano.
+            ax3.text(global_sites[key]['longitude']-0.055, 
+                    global_sites[key]['latitude']-0.005, 
+                    global_sites[key]['site_ID'], 
+                    verticalalignment='center', 
+                    horizontalalignment='left', 
+                    transform=text_transform,
+                    bbox=dict(facecolor='sandybrown', 
+                    alpha=0.5, 
+                    boxstyle='round'))
+            # Add text 25 pixels to the left of the marker.
+            ax3.text(global_sites[key]['longitude']-0.12, 
+                    global_sites[key]['latitude']-0.04, 
+                    accum[key], 
+                    verticalalignment='center', 
+                    horizontalalignment='left', 
+                    transform=text_transform,
+                    bbox=dict(facecolor='olivedrab', 
+                    alpha=0.5, 
+                    boxstyle='round'))
         else:
             # Add text 25 pixels to the left of the volcano.
             ax3.text(global_sites[key]['longitude'], 
@@ -547,6 +610,11 @@ def precip_accum(DATE, HOUR, tdelta=24):
                  "DOWN": round(day_end['DOWN'] - day_start['DOWN'], 2),
                  "SHEDD": round(day_end['SHEDD'] - day_start['SHEDD'], 2),
                  "VILLA": round(day_end['VILLA'] - day_start['VILLA'], 2)}
+    
+    # check to make sure values are valid
+    for key in day_accum:
+        if day_accum[key] < 0:
+            day_accum[key] = "N/A"
     
     return day_accum
 
