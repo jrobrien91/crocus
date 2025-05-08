@@ -6,6 +6,7 @@ Using Amazon S3 storage of MRMS, download all 33 level files, merge, and display
 HISTORY:
     10 March 2025 - Joe O'Brien <obrienj@anl.gov> - Written and tested with 
         4 March 2025 case. 
+    
 """
 
 import glob
@@ -24,6 +25,7 @@ from cartopy.io.img_tiles import OSM
 from matplotlib.transforms import offset_copy
 from matplotlib import pyplot as plt
 import matplotlib.gridspec as gridspec
+from PIL import Image
 
 import cfgrib
 import cmweather
@@ -32,11 +34,14 @@ import imageio
 
 def mrms_ref_mosaic(ds_merged,
                     slice_sites,
+                    out_date,
+                    out_time,
                     chi_box=(271.9, 272.5, 41.6, 42.15),
                     crocus_nodes=True,
                     time_index=0,
                     elevation=1.0,
-                    site="NEIU"):
+                    site="NEIU",
+                    outdir="./"):
     """
     Create a display to visualize MRMS 3D Reflectivity across
      the Chicago-CROCUS domain, marking locations of the nodes,
@@ -65,6 +70,9 @@ def mrms_ref_mosaic(ds_merged,
     
     site : str
         Identifer of the node for lat/lon slices
+    
+    outdir : str
+        Path to save figure to
 
     Returns
     -------
@@ -236,7 +244,16 @@ def mrms_ref_mosaic(ds_merged,
     ax3.set_ylabel("Height \n [km above MSL]")
     ax3.set_xlabel(r"Latitude $\degree$")
 
-    return fig
+    try:
+        fig.savefig(outdir + 
+                    f"/mrms-radar-3d-ref-{out_date}-{out_time}.png"
+        )
+        plt.close(fig)
+        STATUS = "SUCCESS"
+    except:
+        STATUS = "FAILURE"
+
+    return STATUS
 
 def main(nargs, in_sites):
     """
@@ -308,7 +325,7 @@ def main(nargs, in_sites):
                 with tempfile.NamedTemporaryFile(suffix=".grib2") as f:
                     # Uncompress and read the file
                     f.write(gzip.decompress(gzip_file.read()))
-                    ds = xr.load_dataset(f.name)
+                    ds = xr.load_dataset(f.name, decode_timedelta=False)
                     # To concatenate, need to add in elevation level
                     elevation_value = float(file_path[0].split('/')[-1].split('_')[-2])
                     ds = ds.assign_coords({"elevation" : elevation_value})
@@ -351,30 +368,35 @@ def main(nargs, in_sites):
 
         out_fig = mrms_ref_mosaic(ds_merged,
                                   in_sites,
+                                  date_part,
+                                  time_part,
                                   chi_box=tuple(B_BOX),
                                   time_index=i,
                                   crocus_nodes=nargs.override,
                                   elevation=nargs.elevation,
-                                  site=nargs.node)
-        out_fig.savefig(
-            f"{templocation}/mrms-radar-3d-ref-{date_part}-{time_part}.png"
-        )
-        # free up space
-        del out_fig
+                                  site=nargs.node,
+                                  outdir=templocation)
 
     # Define files created and define movie path
     map_images = sorted(glob.glob(templocation + "/mrms-radar-3d-ref*"))
-    gif_title = nargs.outdir + "mrms-radar-cref-" + nargs.date + "-" + nargs.hour + ".gif"
+    print(map_images)
+    gif_title = nargs.outdir + "mrms-radar-3d-ref-" + nargs.date + "-" + nargs.hour + ".gif"
 
     # Check to see if the file exists - if it does, delete it
     if os.path.exists(gif_title):
         os.remove(gif_title)
 
-    # Loop through and create the gif
-    with imageio.get_writer(gif_title, mode='I', duration=0.2) as writer:
-        for filename in map_images:
-            image = imageio.imread(filename)
-            writer.append_data(image)
+    # Step 2: Open images using Pillow
+    frames = [Image.open(f) for f in map_images]
+
+    # Step 3: Save as GIF with 2.5s per frame
+    frames[0].save(
+        gif_title,
+        save_all=True,
+        append_images=frames[1:],
+        duration=425,  # Duration in ms
+        loop=0          # Loop forever
+    )
 
     # Free Up Memory
     del fs, ds_merged, gif_title, map_images, templocation
@@ -494,6 +516,28 @@ if __name__ == '__main__':
                     'datalevel' : "a1",
                     'latitude' : 41.867953617,
                     'longitude' : -87.613603892}
+    
+    global_VILLA = {'conventions': "CF 1.10",
+                    'WSN':'W095',
+                    'site_ID' : "VLPK",
+                    'CAMS_tag' : "CMS-WXT-004",
+                    'datastream' : "CMS_wxt536_VLPK_a1",
+                    'wxt-plugin' : "registry.sagecontinuum.org/jrobrien/waggle-wxt536:0.*",
+                    "aqt-plugin" : "registry.sagecontinuum.org/jrobrien/waggle-aqt:0.23.5.*",
+                    'datalevel' : "a1",
+                    'latitude' : 41.884884633495616,
+                    'longitude' : -87.97871741056426}
+    
+    global_midway = {"WSN": "JRO",
+                     "site_ID" : "KMDW",
+                     "elevation" : 617.0,
+                     "latitude": 41.78417,
+                     "longitude": -87.75528}
+
+    global_ohare = {"WSN": "JRO",
+                    "site_ID" : "KORD",
+                    "latitude": 41.97972,
+                    "longitude": -87.90444}
 
     #put these in a dictionary for accessing
     global_sites = {'NU' : global_NU,
@@ -505,7 +549,10 @@ if __name__ == '__main__':
                     'BIG': global_BIG,
                     'HUM': global_HUM,
                     "DOWN": global_DOWN,
-                    "SHEDD": global_SHEDD}
+                    "SHEDD": global_SHEDD,
+                    "VILLA": global_VILLA,
+                    "KMDW": global_midway,
+                    "KORD": global_ohare}
 
     DESCRIPT = ("Hourly Generation of Multi-Radar, Multi-Sensor (MRMS) 3-D " +
                 "Reflectivity Quicklooks and GIFs for the CROCUS Chicago Domain."

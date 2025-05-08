@@ -25,6 +25,7 @@ dependencies:
   - cmweather
   - great_tables
   - polars
+  - Pillow
   - pip
   - pip:
     - selenium

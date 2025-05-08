@@ -1,8 +1,9 @@
 """
-crocus_mrms_24qpe.py
+crocus-mrms-cum-hourly-qpe.py
 
 Using Amazon S3 storage of MRMS,
-download 24hr Radar, Multisensor (1 & 2 Pass) QPE
+download 1Hr Radar, Multisensor (1 & 2 Pass) QPE
+and plot the daily accumulation
 
 Overlay the CROCUS Micronet Values
 
@@ -11,7 +12,7 @@ HISTORY:
         21 April 2025 case. 
 """
 
-import cfgrib
+import os
 import xarray as xr
 import fsspec
 import glob
@@ -28,32 +29,46 @@ from cartopy import crs as ccrs, feature as cfeature
 from cartopy.io.img_tiles import GoogleTiles, OSM
 from matplotlib.transforms import offset_copy
 from matplotlib import pyplot as plt
+from PIL import Image
 import matplotlib.gridspec as gridspec
 
 import cmweather
+import cfgrib
 import sage_data_client
 
-def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
+def mrms_1hr_cum_qpe(ds_merged, 
+                     global_sites, 
+                     accum, 
+                     bounding,
+                     da_max=25, 
+                     da_min=0, 
+                     outdir="./"):
     """
-    Create a display to visualize MRMS 24hr QPE across
-    the Chicago-CROCUS domain, marking locations of the nodes,
-    and comparing against CoCoRaHS. 
+    Create a display to visualize cumulative 1hr MRMS QPE across
+     the Chicago-CROCUS domain, marking locations of the nodes,
+     and comparing against CoCoRaHS. 
 
     Input
     -----
     ds_merged - xarray dataset
         MRMS 24hr Multi-Sensor and Radar only QPE, previously uncompressed and merged
-
     global_sites : dict
-        Information that are specific to the CROCUS sites.
+        Information that are specific to the CROCUS sites. 
+    accum : dict
+        Preciptiation Accumulation for the given period for the CROCUS micronet
+    da_max : float
+        Maximum precipitation accumulation for the period
+    da_min : float
+        Minimum precipitation accumulation for the period
+    outdir : str
+        Path to save figure to
     
     Returns
     -------
-    axarr : Matplotlib.pyplot Figure 
-        Figure instance containing the desired quicklook; to be saved outside 
-        of function
+    status : str
+        returns status message
     """
-    chi_box = nargs.bounding_box
+    chi_box = bounding
     #---------------------------------------------------
     # Define the Subplot Placement
     #---------------------------------------------------
@@ -63,29 +78,23 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
     ax = fig.add_subplot(1, 3, 1, projection=ccrs.PlateCarree())
 
     # Find the maximum value at each position
-    da_max = ds_merged.radar_qpe_24.max()
+    ##da_max = ds_merged.radar_qpe_1hr.max()
 
     # Find the minimum value at each position
-    da_min = 0
-
-    ##gs0 = gridspec.GridSpec(1, 2, figure=figB)
-    ##gs00 = gs0[1].subgridspec(2, 1, hspace=.32)
-
-    # update the extent of the subplot
-    ##gs0.update(top=.90, bottom=0.1, left=0.1, right=.95)
+    ##da_min = 0
 
     # ---------------------------------------------
     # Display the Radar Precipitation Accumulation
     # ---------------------------------------------
 
     ## subset the data
-    ds_merged.radar_qpe_24.plot(transform=ccrs.PlateCarree(),
-                                ax=ax,
-                                cmap="ChaseSpectral",
-                                vmin=da_min,
-                                vmax=da_max,
-                                cbar_kwargs={"location" : "bottom"})
-
+    ds_merged.cumulative_radar_qpe.plot(transform=ccrs.PlateCarree(),
+                                        ax=ax,
+                                        cmap="ChaseSpectral",
+                                        vmin=da_min,
+                                        vmax=da_max,
+                                        cbar_kwargs={"location" : "bottom"})
+    
     # Add some various map elements to the plot to make it recognizable.
     ax.add_feature(cfeature.LAND)
     ax.add_feature(cfeature.OCEAN)
@@ -96,11 +105,7 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
     # Set plot bounds
     ax.set_extent(chi_box)
 
-    # add in crosshairs to indicate the lat/lon slices
-    ##ax.axhline(y=global_sites["ATMOS"]["latitude"], color="black", linestyle="--")
-    ##ax.axvline(x=global_sites["ATMOS"]["longitude"], color="red", linestyle="--")
-
-    # Display the location of the CROCUS nodes
+   # Display the location of the CROCUS nodes
     for key in global_sites:
         if key == "KORD" or key == "KMDW":
             # Add a marker for the CROCUS sites.
@@ -218,19 +223,19 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
     
     # update the title of the display
     ax.set_title(np.datetime_as_string(ds_merged['valid_time'].data, unit='s').replace("T", " - ") + 
-                 "Z\n" + "Radar Derived 24-Hr QPE - MRMS")
+                 "Z\n" + "Radar Derived Cumulative 1-Hr QPE - MRMS")
 
     # ----------------------------
     # Display the Multisensor QPE
     # ----------------------------
     ## subset the data
     ax1 = fig.add_subplot(1, 3, 2, projection=ccrs.PlateCarree())
-    ds_merged.multisensor_qpe_24.plot(transform=ccrs.PlateCarree(),
-                                      ax=ax1,
-                                      cmap="ChaseSpectral",
-                                      vmin=da_min,
-                                      vmax=da_max,
-                                      cbar_kwargs={"location" : "bottom"})
+    ds_merged.cumulative_multisensor.plot(transform=ccrs.PlateCarree(),
+                                          ax=ax1,
+                                          cmap="ChaseSpectral",
+                                          vmin=da_min,
+                                          vmax=da_max,
+                                          cbar_kwargs={"location" : "bottom"})
 
     # Add some various map elements to the plot to make it recognizable.
     ax1.add_feature(cfeature.LAND)
@@ -241,10 +246,6 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
 
     # Set plot bounds
     ax1.set_extent(chi_box)
-
-    # add in crosshairs to indicate the lat/lon slices
-    ##ax1.axhline(y=global_sites["ATMOS"]["latitude"], color="black", linestyle="--")
-    ##ax1.axvline(x=global_sites["ATMOS"]["longitude"], color="red", linestyle="--")
 
     # Display the location of the CROCUS nodes
     for key in global_sites:
@@ -286,16 +287,6 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
                     bbox=dict(facecolor='sandybrown', 
                     alpha=0.5, 
                     boxstyle='round'))
-            # add the accumulation figure
-            ##ax1.text(global_sites[key]['longitude']-0.12, 
-            ##         global_sites[key]['latitude']-0.04, 
-            ##        accum[key], 
-            ##         verticalalignment='center', 
-            ##        horizontalalignment='left', 
-            ##         transform=text_transform,
-            ##         bbox=dict(facecolor='olivedrab', 
-            ##         alpha=0.5, 
-            ##         boxstyle='round'))
         elif key == "BIG" or key == "NU" or key == "CSU":
             # Add text 25 pixels to the left of the volcano.
             ax1.text(global_sites[key]['longitude']-0.05, 
@@ -307,16 +298,6 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
                     bbox=dict(facecolor='sandybrown', 
                     alpha=0.5, 
                     boxstyle='round'))
-            # Add text 25 pixels to the left of the marker.
-            ##ax1.text(global_sites[key]['longitude']-0.10, 
-            ##        global_sites[key]['latitude']-0.045, 
-            ##        accum[key], 
-            ##        verticalalignment='center', 
-            ##        horizontalalignment='left', 
-            ##        transform=text_transform,
-            ##        bbox=dict(facecolor='olivedrab', 
-            ##        alpha=0.5, 
-            ##        boxstyle='round'))
         elif key == "HUM" or key == "NEIU" or key == "VLPK":
             # Add text 25 pixels to the left of the volcano.
             ax1.text(global_sites[key]['longitude']-0.055, 
@@ -328,16 +309,6 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
                     bbox=dict(facecolor='sandybrown', 
                     alpha=0.5, 
                     boxstyle='round'))
-            # Add text 25 pixels to the left of the marker.
-            ##ax1.text(global_sites[key]['longitude']-0.12, 
-            ##        global_sites[key]['latitude']-0.04, 
-            ##        accum[key], 
-            ##        verticalalignment='center', 
-            ##        horizontalalignment='left', 
-            ##        transform=text_transform,
-            ##        bbox=dict(facecolor='olivedrab', 
-            ##        alpha=0.5, 
-            #3        boxstyle='round'))
         else:
             # Add text 25 pixels to the left of the volcano.
             ax1.text(global_sites[key]['longitude'], 
@@ -349,34 +320,22 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
                     bbox=dict(facecolor='sandybrown', 
                     alpha=0.5, 
                     boxstyle='round'))
-            ##if key == "KMDW" or key == "KORD":
-            ##    continue
-            ##else:
-            ##    ax1.text(global_sites[key]['longitude']-0.065, 
-            ##            global_sites[key]['latitude']-0.04, 
-            ##            accum[key], 
-            ##            verticalalignment='center', 
-            ##            horizontalalignment='right', 
-            ##            transform=text_transform,
-            ##            bbox=dict(facecolor='olivedrab', 
-            ##            alpha=0.5, 
-            ##            boxstyle='round'))
     
     # update the title of the display
     ax1.set_title(np.datetime_as_string(ds_merged['valid_time'].data, unit='s').replace("T", " - ") + 
-                  "Z\n" + "Multisensor 24-Hr QPE - Pass 1")
+                  "Z\n" + "Multisensor Cumulative 1-Hr QPE - Pass 1")
 
     # ----------------------------
     # Display the QPE Difference
     # ----------------------------
     ## subset the data
     ax3 = fig.add_subplot(1, 3, 3, projection=ccrs.PlateCarree())
-    ds_merged.multisensor_qpe_pass2.plot(transform=ccrs.PlateCarree(),
-                                         ax=ax3,
-                                         cmap="ChaseSpectral",
-                                         vmin=da_min,
-                                         vmax=da_max,
-                                         cbar_kwargs={"location" : "bottom"})
+    ds_merged.cumulative_ms_pass2.plot(transform=ccrs.PlateCarree(),
+                                       ax=ax3,
+                                       cmap="ChaseSpectral",
+                                       vmin=da_min,
+                                       vmax=da_max,
+                                       cbar_kwargs={"location" : "bottom"})
 
     # Add some various map elements to the plot to make it recognizable.
     ax3.add_feature(cfeature.LAND)
@@ -387,10 +346,6 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
 
     # Set plot bounds
     ax3.set_extent(chi_box)
-
-    # add in crosshairs to indicate the lat/lon slices
-    ##ax3.axhline(y=global_sites["ATMOS"]["latitude"], color="black", linestyle="--")
-    ##ax3.axvline(x=global_sites["ATMOS"]["longitude"], color="red", linestyle="--")
 
     # Display the location of the CROCUS nodes
     for key in global_sites:
@@ -510,11 +465,22 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
     
     # update the title of the display
     ax3.set_title(np.datetime_as_string(ds_merged['valid_time'].data, unit='s').replace("T", " - ") + 
-                  "Z\n" + "Multisensor 24-Hr QPE - Pass 2")
+                  "Z\n" + "Multisensor Cumulative 1-Hr QPE - Pass 2")
+    try:
+        fig.savefig(outdir + 
+                    'mrms-hourly-cum-qpe-' + 
+                    np.datetime_as_string(ds_merged['valid_time'].data, unit='s').replace("T", "-").replace(":", "-") +
+                    '.png')
+        plt.close(fig)
+        STATUS = "SUCCESS"
+    except:
+        STATUS = "FAILURE"
 
-    return fig
+    del fig, ax, ax1, ax3
 
-def precip_accum(global_sites, DATE, HOUR, tdelta=24):
+    return STATUS
+
+def precip_accum(global_sites, DATE, HOUR, tdelta=1):
     """
     Determine the Precipitation Accumulation of the CROCUS MicroNet
     through comparison of final value of precipitation accumulation vs 
@@ -609,6 +575,27 @@ def precip_accum(global_sites, DATE, HOUR, tdelta=24):
     
     return day_accum
 
+def create_gif(path, outdir, date):
+    # Define files created and define movie path
+    map_images = sorted(glob.glob(path + f"mrms-hourly-cum-qpe*"))
+    gif_title = outdir + f"mrms-hourly-cum-qpe-" + date + ".gif"
+
+    # Check to see if the file exists - if it does, delete it
+    if os.path.exists(gif_title):
+        os.remove(gif_title)
+
+    # Step 2: Open images using Pillow
+    frames = [Image.open(f) for f in map_images]
+
+    # Step 3: Save as GIF with 2.5s per frame
+    frames[0].save(
+        gif_title,
+        save_all=True,
+        append_images=frames[1:],
+        duration=850,  # Duration in ms
+        loop=0          # Loop forever
+    )
+
 def main(nargs, in_sites):
 
     # Initial connection to the Amazon S3 bucket
@@ -617,15 +604,17 @@ def main(nargs, in_sites):
     # to lazy to switch all of these
     DATE = nargs.date
     HOUR = nargs.hour
-    chi_box = nargs.bounding_box
+    extent_box = nargs.bounding_box
     global_sites = in_sites
     OUTDIR = nargs.outdir
 
-    s3_multi_bucket = [f"s3://noaa-mrms-pds/CONUS/MultiSensor_QPE_24H_Pass1_00.00/{DATE}/*{DATE}-{HOUR}*"]
-    s3_pass2_bucket = [f"s3://noaa-mrms-pds/CONUS/MultiSensor_QPE_24H_Pass2_00.00/{DATE}/*{DATE}-{HOUR}*"]
-    s3_radar_bucket = [f"s3://noaa-mrms-pds/CONUS/RadarOnly_QPE_24H_00.00/{DATE}/*{DATE}-{HOUR}*"]
+    s3_multi_bucket = [f"s3://noaa-mrms-pds/CONUS/MultiSensor_QPE_01H_Pass1_00.00/{DATE}/*.gz"]
+    s3_pass2_bucket = [f"s3://noaa-mrms-pds/CONUS/MultiSensor_QPE_01H_Pass2_00.00/{DATE}/*.gz"]
+    s3_radar_bucket = [f"s3://noaa-mrms-pds/CONUS/RadarOnly_QPE_01H_00.00/{DATE}/*[0-9]0000.grib2.gz"]
 
-    ds_list = []
+    ds_radar_list = []
+    ds_multi_list = []
+    ds_pass2_list = []
 
     for scan in s3_multi_bucket:
         file_path = sorted(fs.glob(scan))
@@ -635,12 +624,29 @@ def main(nargs, in_sites):
                     # Uncompress and read the file
                     f.write(gzip.decompress(gzip_file.read()))
                     ds = xr.load_dataset(f.name, decode_timedelta=False)
-                    ds = ds.rename({"unknown" : "multisensor_qpe_24"})
-                    ds["multisensor_qpe_24"].attrs["units"] = "mm"
-                    ds["multisensor_qpe_24"].attrs["long_name"] = "Precipitation Accumulation (1-Hr latency)"
+                    ds = ds.rename({"unknown" : "multisensor_qpe_1hr"})
+                    ds["multisensor_qpe_1hr"].attrs["units"] = "mm"
+                    ds["multisensor_qpe_1hr"].attrs["long_name"] = "Precipitation Accumulation (1-Hr latency)"
                     # Subset for the desired bounding box and take out all missing values
-                    ds = ds.sel(latitude=slice(chi_box[3], chi_box[2]), longitude=slice(chi_box[0], chi_box[1])).where(ds.multisensor_qpe_24 > 0.25)
-                    ds_list.append(ds)
+                    ds = ds.sel(latitude=slice(extent_box[3], extent_box[2]), 
+                                longitude=slice(extent_box[0], extent_box[1])).where(ds.multisensor_qpe_1hr > 0)
+                    ds_multi_list.append(ds)
+
+    for scan in s3_radar_bucket:
+        file_path = sorted(fs.glob(scan))
+        for mrms in file_path:
+            with fs.open(mrms, 'rb') as gzip_file:
+                with tempfile.NamedTemporaryFile(suffix=".grib2") as f:
+                    # Uncompress and read the file
+                    f.write(gzip.decompress(gzip_file.read()))
+                    ds = xr.load_dataset(f.name, decode_timedelta=False)
+                    ds = ds.rename({"unknown" : "radar_qpe_1hr"})
+                    ds["radar_qpe_1hr"].attrs["units"] = "mm"
+                    ds["radar_qpe_1hr"].attrs["long_name"] = "Precipitation Accumulation"
+                    # Subset for the desired bounding box and take out all missing values
+                    ds = ds.sel(latitude=slice(extent_box[3], extent_box[2]), 
+                                longitude=slice(extent_box[0], extent_box[1])).where(ds.radar_qpe_1hr > 0)
+                    ds_radar_list.append(ds)
 
     for scan in s3_pass2_bucket:
         file_path = sorted(fs.glob(scan))
@@ -654,37 +660,46 @@ def main(nargs, in_sites):
                     ds["multisensor_qpe_pass2"].attrs["units"] = "mm"
                     ds["multisensor_qpe_pass2"].attrs["long_name"] = "Precipitation Accumulation (2-Hr latency)"
                     # Subset for the desired bounding box and take out all missing values
-                    ds = ds.sel(latitude=slice(chi_box[3], chi_box[2]), longitude=slice(chi_box[0], chi_box[1])).where(ds.multisensor_qpe_pass2 > 0.25)
-                    ds_list.append(ds)
+                    ds = ds.sel(latitude=slice(extent_box[3], extent_box[2]), 
+                                longitude=slice(extent_box[0], extent_box[1])).where(ds.multisensor_qpe_pass2 > 0)
+                    ds_pass2_list.append(ds)
 
-    for scan in s3_radar_bucket:
-        file_path = sorted(fs.glob(scan))
-        for mrms in file_path:
-            with fs.open(mrms, 'rb') as gzip_file:
-                with tempfile.NamedTemporaryFile(suffix=".grib2") as f:
-                    # Uncompress and read the file
-                    f.write(gzip.decompress(gzip_file.read()))
-                    ds = xr.load_dataset(f.name, decode_timedelta=False)
-                    ds = ds.rename({"unknown" : "radar_qpe_24"})
-                    ds["radar_qpe_24"].attrs["units"] = "mm"
-                    ds["radar_qpe_24"].attrs["long_name"] = "Precipitation Accumulation"
-                    # Subset for the desired bounding box and take out all missing values
-                    ds = ds.sel(latitude=slice(chi_box[3], chi_box[2]), longitude=slice(chi_box[0], chi_box[1])).where(ds.radar_qpe_24 > 0.25)
-                    ds_list.append(ds)
+    ds_radar_merged = xr.concat(ds_radar_list, dim="time")
+    ds_multi_merged = xr.concat(ds_multi_list, dim="time")
+    ds_pass2_merged = xr.concat(ds_pass2_list, dim="time")
 
-    ds_merged = xr.merge(ds_list)
+    ds_merged = xr.merge([ds_radar_merged, ds_multi_merged, ds_pass2_merged])
 
-    ds_merged["qpe_diff_pass1"] = ds_merged.radar_qpe_24 - ds_merged.multisensor_qpe_24
-    ds_merged["qpe_diff_pass1"].attrs["units"] = "mm"
-    ds_merged["qpe_diff_pass1"].attrs["long_name"] = "Difference in Precipitation Accumuluation (Radar - Pass 1)"
+    # Calculate the Cumulative Distribution
+    radar_cumulative = ds_merged['radar_qpe_1hr'].cumsum(dim='time')
+    multisensor = ds_merged['multisensor_qpe_1hr'].cumsum(dim="time")
+    multisensor_pass2 = ds_merged['multisensor_qpe_pass2'].cumsum(dim="time")
 
-    ds_merged["qpe_diff_pass2"] = ds_merged.radar_qpe_24 - ds_merged.multisensor_qpe_pass2
-    ds_merged["qpe_diff_pass2"].attrs["units"] = "mm"
-    ds_merged["qpe_diff_pass2"].attrs["long_name"] = "Difference in Precipitation Accumuluation (Radar - Pass 2)"
+    ds_merged['cumulative_radar_qpe'] = radar_cumulative
+    ds_merged["cumulative_radar_qpe"].attrs["units"] = "mm"
+    ds_merged["cumulative_radar_qpe"].attrs["long_name"] = "Precipitation Accumulation"
 
-    accum = precip_accum(global_sites, DATE, HOUR, tdelta=24)
-    qpe24_plot = mrms_24hr_qpe(ds_merged, global_sites, accum, nargs)
-    qpe24_plot.savefig(f"{OUTDIR}mrms-24hr-qpe-{DATE}.png")
+    ds_merged['cumulative_multisensor'] = multisensor
+    ds_merged["cumulative_multisensor"].attrs["units"] = "mm"
+    ds_merged["cumulative_multisensor"].attrs["long_name"] = "Precipitation Accumulation (1-Hr latency)"
+
+    ds_merged['cumulative_ms_pass2'] = multisensor_pass2
+    ds_merged["cumulative_ms_pass2"].attrs["units"] = "mm"
+    ds_merged["cumulative_ms_pass2"].attrs["long_name"] = "Precipitation Accumulation (2-Hr latency)"
+
+    templocation = tempfile.mkdtemp() + "/"
+    for i in range(1, len(ds_merged.time.data)):
+        time_pull = pd.to_datetime(str(ds_merged.isel(time=i).time.data)).strftime("%H%M%S")
+        hourly_accum = precip_accum(global_sites, DATE, time_pull, tdelta=i)
+        qpe1hr_plot = mrms_1hr_cum_qpe(ds_merged.isel(time=i), 
+                                       global_sites, 
+                                       hourly_accum, 
+                                       extent_box,
+                                       da_max=ds_merged.cumulative_radar_qpe.max(), 
+                                       da_min=0.0,
+                                       outdir=templocation)
+    
+    create_gif(templocation, OUTDIR, DATE)
 
 if __name__ == '__main__':
 
@@ -839,8 +854,8 @@ if __name__ == '__main__':
                     "KMDW": global_midway,
                     "KORD": global_ohare}
 
-    DESCRIPT = ("Hourly Generation of Multi-Radar, Multi-Sensor (MRMS)" +
-                "24-Hr QPE (Radar, Multisensor) for the CROCUS Chicago Domain."
+    DESCRIPT = ("Generation of Multi-Radar, Multi-Sensor (MRMS)" +
+                "Daily Cumulative 1-Hr QPE (Radar, Multisensor) for the CROCUS Chicago Domain."
     )
     BOX_DESCRIPT = (
         "Display Bounding Box in [Longitude Min, Longitude Max, "
@@ -851,8 +866,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description=DESCRIPT,
         usage=(
-            "python crocus-mrms-24qpe.py --date 20250304 "
-            "--hour 130000 --outdir /Users/jrobrien/dev/crocus/"
+            "python crocus-mrms-cum-hourly-qpe.py --date 20250304 "
+            "--outdir /Users/jrobrien/dev/crocus/data/mrms/hourly"
         )
     )
 
