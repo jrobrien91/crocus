@@ -514,7 +514,7 @@ def mrms_24hr_qpe(ds_merged, global_sites, accum, nargs):
 
     return fig
 
-def precip_accum(DATE, HOUR, tdelta=24):
+def precip_accum(global_sites, DATE, HOUR, tdelta=24):
     """
     Determine the Precipitation Accumulation of the CROCUS MicroNet
     through comparison of final value of precipitation accumulation vs 
@@ -522,6 +522,8 @@ def precip_accum(DATE, HOUR, tdelta=24):
 
     Input
     -----
+    global_sites : dict
+        Dictionary containing site identifiers and node codes
     DATE : str
         Date of interest in YYYYMMDD defined by the user
     HOUR : str
@@ -529,8 +531,17 @@ def precip_accum(DATE, HOUR, tdelta=24):
     delta : int
         Number of hours to accumulation precipitation over
     """
+
     # Define parameters to drop
-    drop_list = ["meta.host", "meta.missing", "meta.node", "meta.plugin", "meta.sensor", "meta.task", "meta.units", "meta.zone", "meta.job"]
+    drop_list = ["meta.host", 
+                 "meta.missing", 
+                 "meta.node", 
+                 "meta.plugin", 
+                 "meta.sensor", 
+                 "meta.task", 
+                 "meta.units", 
+                 "meta.zone", 
+                 "meta.job"]
     
     # Define the times between the periods to minimize the amount of data pulled down
     MICRO_END = DATE[0:4] + "-" + DATE[4:6] + "-" + DATE[6:8] + "T" + HOUR[0:2] + ":" + HOUR[2:4] + ":" + HOUR[4:6] + "Z"
@@ -556,22 +567,18 @@ def precip_accum(DATE, HOUR, tdelta=24):
     ).set_index("timestamp")
     # Drop unnesscary stuff
     df_end = df_end.drop(drop_list, axis=1)
-    #put these in a dictionary for accessing
-    day_end = {'NU' : df_end.loc[df_end["meta.vsn"]=="W099"].iloc[[-1], 1].values[0], 
-               'CSU': df_end.loc[df_end["meta.vsn"]=="W099"].iloc[[-1], 1].values[0],
-               'NEIU': df_end.loc[df_end["meta.vsn"]=="W08D"].iloc[[-1], 1].values[0],
-               'UIC': df_end.loc[df_end["meta.vsn"]=="W096"].iloc[[-1], 1].values[0],
-               'ATMOS': df_end.loc[df_end["meta.vsn"]=="W0A4"].iloc[[-1], 1].values[0],
-               'CCICS': df_end.loc[df_end["meta.vsn"]=="W08B"].iloc[[-1], 1].values[0],
-               'BIG': df_end.loc[df_end["meta.vsn"]=="W0A0"].iloc[[-1], 1].values[0],
-               'HUM': df_end.loc[df_end["meta.vsn"]=="W0A1"].iloc[[-1], 1].values[0],
-               "DOWN": df_end.loc[df_end["meta.vsn"]=="W09D"].iloc[[-1], 1].values[0],
-               "SHEDD": df_end.loc[df_end["meta.vsn"]=="W09E"].iloc[[-1], 1].values[0],
-               "VILLA": df_end.loc[df_end["meta.vsn"]=="W095"].iloc[[-1], 1].values[0]}
-    
+    # initialize the dictionary
+    day_end = {}
+    for site in global_sites:
+        try:
+            day_end.update({global_sites[site]["site_ID"] : df_end.loc[df_end["meta.vsn"]==global_sites[site]["WSN"]].iloc[[-1], 1].values[0]})
+        except:
+            day_end.update({global_sites[site]["site_ID"] : "N/A"})
+
     #---------------------
     # Start of the Period
     #---------------------
+
     # Query all the nodes just for precipitation
     df_start = sage_data_client.query(
     start=micro_dt_day0_start.strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -585,36 +592,20 @@ def precip_accum(DATE, HOUR, tdelta=24):
     # Drop the uncessary stuff
     df_start = df_start.drop(drop_list, axis=1)
     # put these in a dictionary for accessing
-    #put these in a dictionary for accessing
-    day_start = {'NU' : df_start.loc[df_start["meta.vsn"]=="W099"].iloc[[-1], 1].values[0], 
-                 'CSU': df_start.loc[df_start["meta.vsn"]=="W099"].iloc[[-1], 1].values[0],
-                 'NEIU': df_start.loc[df_start["meta.vsn"]=="W08D"].iloc[[-1], 1].values[0],
-                 'UIC': df_start.loc[df_start["meta.vsn"]=="W096"].iloc[[-1], 1].values[0],
-                 'ATMOS': df_start.loc[df_start["meta.vsn"]=="W0A4"].iloc[[-1], 1].values[0],
-                 'CCICS': df_start.loc[df_start["meta.vsn"]=="W08B"].iloc[[-1], 1].values[0],
-                 'BIG': df_start.loc[df_start["meta.vsn"]=="W0A0"].iloc[[-1], 1].values[0],
-                 'HUM': df_start.loc[df_start["meta.vsn"]=="W0A1"].iloc[[-1], 1].values[0],
-                 "DOWN": df_start.loc[df_start["meta.vsn"]=="W09D"].iloc[[-1], 1].values[0],
-                 "SHEDD": df_start.loc[df_start["meta.vsn"]=="W09E"].iloc[[-1], 1].values[0],
-                 "VILLA": df_start.loc[df_start["meta.vsn"]=="W095"].iloc[[-1], 1].values[0]}
-    
+    day_start = {}
+    for site in global_sites:
+        try:
+            day_start.update({global_sites[site]["site_ID"] : df_start.loc[df_start["meta.vsn"]==global_sites[site]["WSN"]].iloc[[-1], 1].values[0]})
+        except:
+            day_start.update({global_sites[site]["site_ID"] : "N/A"})
+
     # find the period accumulation by taking the difference
-    day_accum = {'NU' : round(day_end['NU'] - day_start['NU'], 2),
-                 'CSU': round(day_end['CSU'] - day_start['CSU'], 2),
-                 'NEIU': round(day_end['NEIU'] - day_start['NEIU'], 2),
-                 'UIC': round(day_end['UIC'] - day_start['UIC'], 2),
-                 'ATMOS': round(day_end['ATMOS'] - day_start['ATMOS'], 2),
-                 'CCICS': round(day_end['CCICS'] - day_start['CCICS'], 2),
-                 'BIG': round(day_end['BIG'] - day_start['BIG'], 2),
-                 'HUM': round(day_end['HUM'] - day_start['HUM'], 2),
-                 "DOWN": round(day_end['DOWN'] - day_start['DOWN'], 2),
-                 "SHEDD": round(day_end['SHEDD'] - day_start['SHEDD'], 2),
-                 "VILLA": round(day_end['VILLA'] - day_start['VILLA'], 2)}
-    
-    # check to make sure values are valid
-    for key in day_accum:
-        if day_accum[key] < 0:
-            day_accum[key] = "N/A"
+    day_accum = {}
+    for site in global_sites:
+        try:
+            day_accum.update({site : round(day_end[site] - day_start[site], 2)})
+        except:
+            day_accum.update({site : "N/A"})
     
     return day_accum
 
@@ -691,7 +682,7 @@ def main(nargs, in_sites):
     ds_merged["qpe_diff_pass2"].attrs["units"] = "mm"
     ds_merged["qpe_diff_pass2"].attrs["long_name"] = "Difference in Precipitation Accumuluation (Radar - Pass 2)"
 
-    accum = precip_accum(DATE, HOUR, tdelta=24)
+    accum = precip_accum(global_sites, DATE, HOUR, tdelta=24)
     qpe24_plot = mrms_24hr_qpe(ds_merged, global_sites, accum, nargs)
     qpe24_plot.savefig(f"{OUTDIR}mrms-24hr-qpe-{DATE}.png")
 
@@ -861,7 +852,7 @@ if __name__ == '__main__':
         description=DESCRIPT,
         usage=(
             "python crocus-mrms-24qpe.py --date 20250304 "
-            "--hour 13 --outdir /Users/jrobrien/dev/crocus/"
+            "--hour 130000 --outdir /Users/jrobrien/dev/crocus/"
         )
     )
 
