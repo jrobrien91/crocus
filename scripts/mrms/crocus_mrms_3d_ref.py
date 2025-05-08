@@ -6,6 +6,7 @@ Using Amazon S3 storage of MRMS, download all 33 level files, merge, and display
 HISTORY:
     10 March 2025 - Joe O'Brien <obrienj@anl.gov> - Written and tested with 
         4 March 2025 case. 
+    
 """
 
 import glob
@@ -32,11 +33,14 @@ import imageio
 
 def mrms_ref_mosaic(ds_merged,
                     slice_sites,
+                    out_date,
+                    out_time,
                     chi_box=(271.9, 272.5, 41.6, 42.15),
                     crocus_nodes=True,
                     time_index=0,
                     elevation=1.0,
-                    site="NEIU"):
+                    site="NEIU",
+                    outdir="./"):
     """
     Create a display to visualize MRMS 3D Reflectivity across
      the Chicago-CROCUS domain, marking locations of the nodes,
@@ -65,6 +69,9 @@ def mrms_ref_mosaic(ds_merged,
     
     site : str
         Identifer of the node for lat/lon slices
+    
+    outdir : str
+        Path to save figure to
 
     Returns
     -------
@@ -236,6 +243,15 @@ def mrms_ref_mosaic(ds_merged,
     ax3.set_ylabel("Height \n [km above MSL]")
     ax3.set_xlabel(r"Latitude $\degree$")
 
+    try:
+        fig.savefig(outdir + 
+                    f"mrms-radar-3d-ref-{out_date}-{out_time}.png"
+        )
+        plt.close(fig)
+        STATUS = "SUCCESS"
+    except:
+        STATUS = "FAILURE"
+
     return fig
 
 def main(nargs, in_sites):
@@ -308,7 +324,7 @@ def main(nargs, in_sites):
                 with tempfile.NamedTemporaryFile(suffix=".grib2") as f:
                     # Uncompress and read the file
                     f.write(gzip.decompress(gzip_file.read()))
-                    ds = xr.load_dataset(f.name)
+                    ds = xr.load_dataset(f.name, decode_timedelta=False)
                     # To concatenate, need to add in elevation level
                     elevation_value = float(file_path[0].split('/')[-1].split('_')[-2])
                     ds = ds.assign_coords({"elevation" : elevation_value})
@@ -351,16 +367,14 @@ def main(nargs, in_sites):
 
         out_fig = mrms_ref_mosaic(ds_merged,
                                   in_sites,
+                                  date_part,
+                                  time_part,
                                   chi_box=tuple(B_BOX),
                                   time_index=i,
                                   crocus_nodes=nargs.override,
                                   elevation=nargs.elevation,
-                                  site=nargs.node)
-        out_fig.savefig(
-            f"{templocation}/mrms-radar-3d-ref-{date_part}-{time_part}.png"
-        )
-        # free up space
-        del out_fig
+                                  site=nargs.node,
+                                  outdir=templocation)
 
     # Define files created and define movie path
     map_images = sorted(glob.glob(templocation + "/mrms-radar-3d-ref*"))
@@ -370,11 +384,17 @@ def main(nargs, in_sites):
     if os.path.exists(gif_title):
         os.remove(gif_title)
 
-    # Loop through and create the gif
-    with imageio.get_writer(gif_title, mode='I', duration=0.2) as writer:
-        for filename in map_images:
-            image = imageio.imread(filename)
-            writer.append_data(image)
+    # Step 2: Open images using Pillow
+    frames = [Image.open(f) for f in map_images]
+
+    # Step 3: Save as GIF with 2.5s per frame
+    frames[0].save(
+        gif_title,
+        save_all=True,
+        append_images=frames[1:],
+        duration=850,  # Duration in ms
+        loop=0          # Loop forever
+    )
 
     # Free Up Memory
     del fs, ds_merged, gif_title, map_images, templocation
