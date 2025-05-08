@@ -25,6 +25,7 @@ from cartopy.io.img_tiles import OSM
 from matplotlib.transforms import offset_copy
 from matplotlib import pyplot as plt
 import matplotlib.gridspec as gridspec
+from PIL import Image
 
 import cfgrib
 import cmweather
@@ -245,14 +246,14 @@ def mrms_ref_mosaic(ds_merged,
 
     try:
         fig.savefig(outdir + 
-                    f"mrms-radar-3d-ref-{out_date}-{out_time}.png"
+                    f"/mrms-radar-3d-ref-{out_date}-{out_time}.png"
         )
         plt.close(fig)
         STATUS = "SUCCESS"
     except:
         STATUS = "FAILURE"
 
-    return fig
+    return STATUS
 
 def main(nargs, in_sites):
     """
@@ -378,7 +379,8 @@ def main(nargs, in_sites):
 
     # Define files created and define movie path
     map_images = sorted(glob.glob(templocation + "/mrms-radar-3d-ref*"))
-    gif_title = nargs.outdir + "mrms-radar-cref-" + nargs.date + "-" + nargs.hour + ".gif"
+    print(map_images)
+    gif_title = nargs.outdir + "mrms-radar-3d-ref-" + nargs.date + "-" + nargs.hour + ".gif"
 
     # Check to see if the file exists - if it does, delete it
     if os.path.exists(gif_title):
@@ -392,7 +394,7 @@ def main(nargs, in_sites):
         gif_title,
         save_all=True,
         append_images=frames[1:],
-        duration=850,  # Duration in ms
+        duration=425,  # Duration in ms
         loop=0          # Loop forever
     )
 
@@ -514,6 +516,28 @@ if __name__ == '__main__':
                     'datalevel' : "a1",
                     'latitude' : 41.867953617,
                     'longitude' : -87.613603892}
+    
+    global_VILLA = {'conventions': "CF 1.10",
+                    'WSN':'W095',
+                    'site_ID' : "VLPK",
+                    'CAMS_tag' : "CMS-WXT-004",
+                    'datastream' : "CMS_wxt536_VLPK_a1",
+                    'wxt-plugin' : "registry.sagecontinuum.org/jrobrien/waggle-wxt536:0.*",
+                    "aqt-plugin" : "registry.sagecontinuum.org/jrobrien/waggle-aqt:0.23.5.*",
+                    'datalevel' : "a1",
+                    'latitude' : 41.884884633495616,
+                    'longitude' : -87.97871741056426}
+    
+    global_midway = {"WSN": "JRO",
+                     "site_ID" : "KMDW",
+                     "elevation" : 617.0,
+                     "latitude": 41.78417,
+                     "longitude": -87.75528}
+
+    global_ohare = {"WSN": "JRO",
+                    "site_ID" : "KORD",
+                    "latitude": 41.97972,
+                    "longitude": -87.90444}
 
     #put these in a dictionary for accessing
     global_sites = {'NU' : global_NU,
@@ -525,7 +549,10 @@ if __name__ == '__main__':
                     'BIG': global_BIG,
                     'HUM': global_HUM,
                     "DOWN": global_DOWN,
-                    "SHEDD": global_SHEDD}
+                    "SHEDD": global_SHEDD,
+                    "VILLA": global_VILLA,
+                    "KMDW": global_midway,
+                    "KORD": global_ohare}
 
     DESCRIPT = ("Hourly Generation of Multi-Radar, Multi-Sensor (MRMS) 3-D " +
                 "Reflectivity Quicklooks and GIFs for the CROCUS Chicago Domain."
