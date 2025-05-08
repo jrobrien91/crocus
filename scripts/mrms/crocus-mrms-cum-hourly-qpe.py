@@ -874,7 +874,8 @@ if __name__ == '__main__':
     parser.add_argument("--date",
                         type=str,
                         dest='date',
-                        default=datetime.now(ZoneInfo(WAGGLE_TIMEZONE)).strftime('%Y%m%d'),
+                        default=(datetime.datetime.now(ZoneInfo(waggle_timezone)) - 
+                                 datetime.timedelta(days=1)).strftime('%Y%m%d'),
                         help="Date to Start Quicklook Creation in YYYYMMDD [UTC] format"
     )
     parser.add_argument("--hour",
