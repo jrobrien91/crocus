@@ -29,8 +29,12 @@ MAILTO=obrienj@anl.gov
 # -- Website --
 0 6 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/website/generate_micronet_index.py
 0 6 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/website/generate_mrms_24hr_index.py
+0 8 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/website/generate_mrms_1hr_cum_index.py
 
 # -- Analysis -- 
+
+# MRMS 1hr Cumulative QPE
+0 6 * * * conda activate crocus, python /home/obrienj/git-dev/crocus/scripts/mrms/crocus-mrms-cum-hourly-qpe.py --outdir /home/obrienj/crocus-analysis/mrms/hourly-cumulative/
 
 # MRMS 24hr QPE
 0 5 * * * conda activate crocus; python /home/obrienj/git-dev/crocus/scripts/mrms/crocus-mrms-24qpe.py --outdir /home/obrienj/crocus-analysis/mrms/qpe-24/
