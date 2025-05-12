@@ -540,8 +540,7 @@ def precip_accum(global_sites, DATE, HOUR, tdelta=24):
                  "meta.sensor", 
                  "meta.task", 
                  "meta.units", 
-                 "meta.zone", 
-                 "meta.job"]
+                 "meta.zone"]
     
     # Define the times between the periods to minimize the amount of data pulled down
     MICRO_END = DATE[0:4] + "-" + DATE[4:6] + "-" + DATE[6:8] + "T" + HOUR[0:2] + ":" + HOUR[2:4] + ":" + HOUR[4:6] + "Z"
