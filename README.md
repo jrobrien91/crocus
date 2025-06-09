@@ -18,17 +18,39 @@ Repo to store personal analysis for the Community Research on Climate and Urban 
 
 
 ## Necessary Workflow
+### Switching between local and GCE
 1. Track a Remote Github Branch
 ```bash
 git branch --track branch-name origin/branch-name
 ```
-
-2. To update the crontab
+### Updating cronjobs on GCE
+1. To update the crontab
 ```bash
 crontab -e
 ```
 
-3. How to backup crontab
+2. How to backup crontab
 ```bash
 crontab -l > gce_crontab.bak
 ```
+### Transfering data between locations using tmux and rsync
+1. Start a new tmux session
+   ```bash
+   tmux new -s {session_name}
+   ```
+2. Within the tmux session, copy data
+   ```bash
+   rsync -avz user@computer:path_to_data path_to_save_location
+   ```
+3. Detach from the tmux session
+   ```bash
+   CTRL+B, D
+   ```
+4. Reattach to the tmux session when needed
+   ```bash
+   tmux attach -t {session_name}
+   ```
+5. Kill a tmux session
+   ```bash
+   tmux kill-session -t {session_name}
+   ```
